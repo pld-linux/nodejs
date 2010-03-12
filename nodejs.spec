@@ -1,0 +1,127 @@
+
+# For the 1.2 branch, we use 0s here
+# For 1.3+, we use the three digit versions
+%define		somajor 2
+%define		sominor 1
+%define		sobuild 2
+%define		sover %{somajor}.%{sominor}.%{sobuild}
+
+%define		snap	20100309svn4070
+%define		rel		1
+Summary:	Asynchronous JavaScript Engine
+Name:		nodejs
+Version:	0.1.31
+Release:	0
+License:	BSD
+Group:		Libraries
+URL:		http://nodejs.org/
+Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
+# Source0-md5:	a9e0ba08539edbdc8e5611e7550f1c47
+Source1:	http://www.crockford.com/javascript/jsmin.py.txt
+# Source1-md5:	0521ddcf3e52457223c6e0d602486a89
+Patch0:		%{name}-system-libs.patch
+BuildRequires:	gcc >= 4.0
+BuildRequires:	libeio-devel
+BuildRequires:	libev-devel >= 3.90
+BuildRequires:	libstdc++-devel
+BuildRequires:	python
+BuildRequires:	udns-devel
+BuildRequires:	v8-devel
+ExclusiveArch:	%{ix86} %{x8664} arm
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%description
+Node's goal is to provide an easy way to build scalable network
+programs. In the above example, the two second delay does not prevent
+the server from handling new requests. Node tells the operating system
+(through epoll, kqueue, /dev/poll, or select) that it should be
+notified when the 2 seconds are up or if a new connection is made --
+then it goes to sleep. If someone new connects, then it executes the
+callback, if the timeout expires, it executes the inner callback. Each
+connection is only a small heap allocation.
+
+%package libs
+Summary:	V8 JavaScript Engine shared library
+Group:		Libraries
+Conflicts:	v8 < 2.0.0
+
+%description libs
+V8 is Google's open source JavaScript engine. V8 is written in C++ and
+is used in Google Chrome, the open source browser from Google. V8
+implements ECMAScript as specified in ECMA-262, 3rd edition.
+
+This package contains the shared library.
+
+%package devel
+Summary:	Development headers and libraries for v8
+Group:		Development/Libraries
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description devel
+Development headers and libraries for v8.
+
+%prep
+%setup -q -n node-v%{version}
+%patch0 -p1
+rm tools/jsmin.py
+mv deps/v8/tools/jsmin.py tools/
+rm -r deps/v8
+rm -r deps/udns
+rm -r deps/libev
+rm -r deps/libeio
+
+%build
+# build library
+
+CFLAGS="%{rpmcflags}"
+CXXFLAGS="%{rpmcxxflags}"
+LDFLAGS="%{rpmcflags}"
+%if "%{pld_release}" == "ac"
+CC=%{__cc}4
+CXX=%{__cxx}4
+%else
+CC=%{__cc}
+CXX=%{__cxx}
+%endif
+export CFLAGS LDFLAGS CXXFLAGS CC CXX
+
+tools/waf-light configure \
+	--prefix=%{_prefix}
+
+tools/waf-light build
+
+%install
+rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}}
+
+tools/waf-light install \
+	--destdir=$RPM_BUILD_ROOT
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
+
+%files
+%defattr(644,root,root,755)
+%doc AUTHORS ChangeLog LICENSE
+%attr(755,root,root) %{_bindir}/node
+%attr(755,root,root) %{_bindir}/node-repl
+%dir %{_libdir}/node
+%dir %{_libdir}/node/libraries
+%{_libdir}/node/libraries/*.js
+%{_mandir}/man1/node.1*
+
+%files libs
+%defattr(644,root,root,755)
+
+%files devel
+%defattr(644,root,root,755)
+%{_includedir}/node/config.h
+%{_includedir}/node/evcom.h
+%{_includedir}/node/node.h
+%{_includedir}/node/node_events.h
+%{_includedir}/node/node_net.h
+%{_includedir}/node/node_object_wrap.h
+%{_includedir}/node/node_version.h
