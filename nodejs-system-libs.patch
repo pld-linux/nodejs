@@ -1,0 +1,45 @@
+--- node-v0.1.31/wscript	2010-03-05 18:55:13.000000000 -0700
++++ node-working-messy/wscript	2010-03-10 00:05:02.000000000 -0700
+@@ -247,16 +247,13 @@
+ 
+ def build_v8(bld):
+   v8 = bld.new_task_gen(
+-    source        = 'deps/v8/SConstruct ' 
+-                  + bld.path.ant_glob('v8/include/*') 
+-                  + bld.path.ant_glob('v8/src/*'),
+-    target        = bld.env["staticlib_PATTERN"] % "v8",
+-    rule          = v8_cmd(bld, "default"),
++    source        = '',
++    rule          = '',
+     before        = "cxx",
+     install_path  = None
+   )
+   v8.uselib = "EXECINFO"
+-  bld.env["CPPPATH_V8"] = "deps/v8/include"
++  bld.env["CPPPATH_V8"] = "/usr/include"
+   t = join(bld.srcnode.abspath(bld.env_of_name("default")), v8.target)
+   if sys.platform.startswith("sunos"):
+     bld.env_of_name('default')["LINKFLAGS_V8"] = ["-mt", t]
+@@ -275,13 +272,12 @@
+     else:
+       bld.env_of_name('debug')["LINKFLAGS_V8"] = ["-pthread", t]
+ 
+-  bld.install_files('${PREFIX}/include/node/', 'deps/v8/include/*.h')
++  bld.install_files('${PREFIX}/include/node/')
+ 
+ def build(bld):
+   bld.add_subdirs('deps/libeio deps/libev')
+ 
+   build_udns(bld)
+-  build_v8(bld)
+ 
+   ### evcom
+   evcom = bld.new_task_gen("cc")
+@@ -370,6 +366,7 @@
+   node.add_objects = 'ev eio evcom http_parser coupling'
+   node.uselib_local = ''
+   node.uselib = 'GNUTLS GPGERROR UDNS V8 EXECINFO DL KVM SOCKET NSL'
++  node.env["LINKFLAGS_V8"] = ["-lpthread", '-lv8']
+ 
+   node.install_path = '${PREFIX}/lib'
+   node.install_path = '${PREFIX}/bin'
