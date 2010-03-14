@@ -1,3 +1,5 @@
+# TODO:
+# - use system waf
 
 # For the 1.2 branch, we use 0s here
 # For 1.3+, we use the three digit versions
@@ -6,8 +8,6 @@
 %define		sobuild 2
 %define		sover %{somajor}.%{sominor}.%{sobuild}
 
-%define		snap	20100309svn4070
-%define		rel		1
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.1.31
@@ -20,11 +20,12 @@ Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
 Source1:	http://www.crockford.com/javascript/jsmin.py.txt
 # Source1-md5:	0521ddcf3e52457223c6e0d602486a89
 Patch0:		%{name}-system-libs.patch
-BuildRequires:	gcc >= 4.0
+BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 3.90
 BuildRequires:	libstdc++-devel
 BuildRequires:	python
+BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	udns-devel
 BuildRequires:	v8-devel
 ExclusiveArch:	%{ix86} %{x8664} arm
@@ -40,25 +41,12 @@ then it goes to sleep. If someone new connects, then it executes the
 callback, if the timeout expires, it executes the inner callback. Each
 connection is only a small heap allocation.
 
-%package libs
-Summary:	V8 JavaScript Engine shared library
-Group:		Libraries
-Conflicts:	v8 < 2.0.0
-
-%description libs
-V8 is Google's open source JavaScript engine. V8 is written in C++ and
-is used in Google Chrome, the open source browser from Google. V8
-implements ECMAScript as specified in ECMA-262, 3rd edition.
-
-This package contains the shared library.
-
 %package devel
-Summary:	Development headers and libraries for v8
+Summary:	Development headers for nodejs
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
-Development headers and libraries for v8.
+Development headers for nodejs.
 
 %prep
 %setup -q -n node-v%{version}
@@ -100,9 +88,6 @@ tools/waf-light install \
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	libs -p /sbin/ldconfig
-%postun	libs -p /sbin/ldconfig
-
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog LICENSE
@@ -113,11 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/node/libraries/*.js
 %{_mandir}/man1/node.1*
 
-%files libs
-%defattr(644,root,root,755)
-
 %files devel
 %defattr(644,root,root,755)
+%dir %{_includedir}/node
 %{_includedir}/node/config.h
 %{_includedir}/node/evcom.h
 %{_includedir}/node/node.h
