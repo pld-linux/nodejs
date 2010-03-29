@@ -10,16 +10,15 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.1.31
+Version:	0.1.33
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	a9e0ba08539edbdc8e5611e7550f1c47
+# Source0-md5:	d34173ead6119b9a593176a9c7522cea
 Source1:	http://www.crockford.com/javascript/jsmin.py.txt
 # Source1-md5:	0521ddcf3e52457223c6e0d602486a89
-Patch0:		%{name}-system-libs.patch
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 3.90
@@ -27,7 +26,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	udns-devel
-BuildRequires:	v8-devel
+BuildRequires:	v8-devel >= 2.1.5
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -50,13 +49,6 @@ Development headers for nodejs.
 
 %prep
 %setup -q -n node-v%{version}
-%patch0 -p1
-rm tools/jsmin.py
-mv deps/v8/tools/jsmin.py tools/
-rm -r deps/v8
-rm -r deps/udns
-rm -r deps/libev
-rm -r deps/libeio
 
 %build
 # build library
@@ -74,16 +66,19 @@ CXX=%{__cxx}
 export CFLAGS LDFLAGS CXXFLAGS CC CXX
 
 tools/waf-light configure \
+	--system \
 	--prefix=%{_prefix}
 
 tools/waf-light build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries}
 
 tools/waf-light install \
 	--destdir=$RPM_BUILD_ROOT
+
+install lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -101,10 +96,6 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %dir %{_includedir}/node
-%{_includedir}/node/config.h
-%{_includedir}/node/evcom.h
-%{_includedir}/node/node.h
-%{_includedir}/node/node_events.h
-%{_includedir}/node/node_net.h
-%{_includedir}/node/node_object_wrap.h
-%{_includedir}/node/node_version.h
+%{_includedir}/node/*.h
+%attr(755,root,root) %{_bindir}/node-waf
+%{_libdir}/node/wafadmin/
