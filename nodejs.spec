@@ -10,13 +10,14 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.1.33
+Version:	0.1.92
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
+Patch0:	nodejs-cares-build.patch
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	d34173ead6119b9a593176a9c7522cea
+# Source0-md5:	6f49c25a73e9bf0d23363917ab9b1c5f
 Source1:	http://www.crockford.com/javascript/jsmin.py.txt
 # Source1-md5:	0521ddcf3e52457223c6e0d602486a89
 BuildRequires:	gcc >= 5:4.0
@@ -26,7 +27,8 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	udns-devel
-BuildRequires:	v8-devel >= 2.1.5
+BuildRequires:	c-ares-devel >= 1.7.0
+BuildRequires:	v8-devel >= 2.2.4.2
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -49,6 +51,7 @@ Development headers for nodejs.
 
 %prep
 %setup -q -n node-v%{version}
+%patch0 -p1
 
 %build
 # build library
