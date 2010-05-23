@@ -17,8 +17,6 @@ Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
 # Source0-md5:	5e83341afe2b5edf0595e92f96ceed09
-Source1:	http://www.crockford.com/javascript/jsmin.py.txt
-# Source1-md5:	0521ddcf3e52457223c6e0d602486a89
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 3.90
@@ -53,7 +51,6 @@ Development headers for nodejs.
 
 %build
 # build library
-
 CFLAGS="%{rpmcflags}"
 CXXFLAGS="%{rpmcxxflags}"
 LDFLAGS="%{rpmcflags}"
@@ -75,11 +72,10 @@ tools/waf-light build
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries}
-
 tools/waf-light install \
 	--destdir=$RPM_BUILD_ROOT
 
-install lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries/
+cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
 
 %clean
 rm -rf $RPM_BUILD_ROOT
