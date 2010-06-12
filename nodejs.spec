@@ -1,22 +1,15 @@
 # TODO:
 # - use system waf
 
-# For the 1.2 branch, we use 0s here
-# For 1.3+, we use the three digit versions
-%define		somajor 2
-%define		sominor 1
-%define		sobuild 2
-%define		sover %{somajor}.%{sominor}.%{sobuild}
-
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.1.97
+Version:	0.1.98
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	4e80b775f9417cc8305fdec34646d8fb
+# Source0-md5:	d8a75cb5c18ce20e0206ced95a8c1544
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 3.90
@@ -64,7 +57,9 @@ CXX=%{__cxx}
 export CFLAGS LDFLAGS CXXFLAGS CC CXX
 
 tools/waf-light configure \
-	--system \
+	--shared-v8 \
+	--shared-cares \
+	--shared-libev \
 	--prefix=%{_prefix}
 
 tools/waf-light build
