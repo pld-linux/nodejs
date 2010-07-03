@@ -1,15 +1,13 @@
-# TODO:
-# - use system waf
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.1.98
+Version:	0.1.100
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	d8a75cb5c18ce20e0206ced95a8c1544
+# Source0-md5:	f8567739b71d05b8edcae1916d7e80cb
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 3.90
@@ -18,7 +16,8 @@ BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	udns-devel
 BuildRequires:	c-ares-devel >= 1.7.1-0.20100523.0
-BuildRequires:	v8-devel >= 2.2.12
+BuildRequires:	v8-devel >= 2.2.21
+BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -35,6 +34,7 @@ connection is only a small heap allocation.
 %package devel
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
+Requires:	waf
 
 %description devel
 Development headers for nodejs.
@@ -54,23 +54,31 @@ CXX=%{__cxx}4
 CC=%{__cc}
 CXX=%{__cxx}
 %endif
-export CFLAGS LDFLAGS CXXFLAGS CC CXX
+PYTHONPATH=tools
+export CFLAGS LDFLAGS CXXFLAGS CC CXX PYTHONPATH
 
-tools/waf-light configure \
+waf configure \
 	--shared-v8 \
 	--shared-cares \
 	--shared-libev \
 	--prefix=%{_prefix}
 
-tools/waf-light build
+waf build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries}
-tools/waf-light install \
+
+PYTHONPATH=tools
+export PYTHONPATH
+
+waf install \
 	--destdir=$RPM_BUILD_ROOT
 
 cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
+
+rm $RPM_BUILD_ROOT%{_bindir}/node-waf
+ln -s %{_bindir}/waf $RPM_BUILD_ROOT%{_bindir}/node-waf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
