@@ -8,6 +8,7 @@ Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
 # Source0-md5:	f8567739b71d05b8edcae1916d7e80cb
+BuildRequires:	c-ares-devel >= 1.7.1-0.20100523.0
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 3.90
@@ -15,7 +16,6 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	udns-devel
-BuildRequires:	c-ares-devel >= 1.7.1-0.20100523.0
 BuildRequires:	v8-devel >= 2.2.21
 BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
@@ -67,7 +67,7 @@ waf build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries,%{_libdir}/waf/wafadmin/Tools}
 
 PYTHONPATH=tools
 export PYTHONPATH
@@ -76,6 +76,8 @@ waf install \
 	--destdir=$RPM_BUILD_ROOT
 
 cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
+
+cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_libdir}/waf/wafadmin/Tools/
 
 rm $RPM_BUILD_ROOT%{_bindir}/node-waf
 ln -s %{_bindir}/waf $RPM_BUILD_ROOT%{_bindir}/node-waf
@@ -98,4 +100,4 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_includedir}/node
 %{_includedir}/node/*.h
 %attr(755,root,root) %{_bindir}/node-waf
-%{_libdir}/node/wafadmin/
+%{_libdir}/waf/wafadmin/Tools/node_addon.py
