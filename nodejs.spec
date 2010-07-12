@@ -54,33 +54,31 @@ CXX=%{__cxx}4
 CC=%{__cc}
 CXX=%{__cxx}
 %endif
-PYTHONPATH=tools
-export CFLAGS LDFLAGS CXXFLAGS CC CXX PYTHONPATH
+export CFLAGS LDFLAGS CXXFLAGS CC CXX
 
-waf configure \
+export PYTHONPATH=tools
+%waf configure \
 	--shared-v8 \
 	--shared-cares \
 	--shared-libev \
 	--prefix=%{_prefix}
 
-waf build
+%waf build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries,%{_libdir}/waf/wafadmin/Tools}
 
-PYTHONPATH=tools
-export PYTHONPATH
-
-waf install \
+export PYTHONPATH=tools
+%waf install \
 	--destdir=$RPM_BUILD_ROOT
 
 cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
-
-cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_libdir}/waf/wafadmin/Tools/
+cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_libdir}/waf/wafadmin/Tools
 
 rm $RPM_BUILD_ROOT%{_bindir}/node-waf
-ln -s %{_bindir}/waf $RPM_BUILD_ROOT%{_bindir}/node-waf
+# ? really required?
+ln -s waf $RPM_BUILD_ROOT%{_bindir}/node-waf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -97,7 +95,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%dir %{_includedir}/node
-%{_includedir}/node/*.h
+%{_includedir}/node
 %attr(755,root,root) %{_bindir}/node-waf
 %{_libdir}/waf/wafadmin/Tools/node_addon.py
