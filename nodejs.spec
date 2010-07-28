@@ -1,13 +1,13 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.1.100
+Version:	0.1.102
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	f8567739b71d05b8edcae1916d7e80cb
+# Source0-md5:	93279f1e4595558dacb45a78259b7739
 BuildRequires:	c-ares-devel >= 1.7.1-0.20100523.0
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
@@ -16,7 +16,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	udns-devel
-BuildRequires:	v8-devel >= 2.2.21
+BuildRequires:	v8-devel >= 2.3.2
 BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
