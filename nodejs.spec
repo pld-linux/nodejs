@@ -17,7 +17,7 @@ BuildRequires:	libev-devel >= 4.0.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
-BuildRequires:	v8-devel >= 2.3.2
+BuildRequires:	v8-devel >= 3.1.5
 BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
