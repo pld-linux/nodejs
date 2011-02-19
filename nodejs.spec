@@ -1,21 +1,22 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.1.102
+Version:	0.4.0
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	93279f1e4595558dacb45a78259b7739
-BuildRequires:	c-ares-devel >= 1.7.1-0.20100523.0
+# Source0-md5:	18f89256751f9b8e27dee8494f508171
+Patch0:		%{name}-ev-multiplicity.patch
+BuildRequires:	c-ares-devel
+BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
-BuildRequires:	libev-devel >= 3.90
+BuildRequires:	libev-devel >= 4.0.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
-BuildRequires:	udns-devel
 BuildRequires:	v8-devel >= 2.3.2
 BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
@@ -41,6 +42,7 @@ Development headers for nodejs.
 
 %prep
 %setup -q -n node-v%{version}
+%patch0 -p1
 
 %build
 # build library
@@ -87,7 +89,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
-%attr(755,root,root) %{_bindir}/node-repl
 %dir %{_libdir}/node
 %dir %{_libdir}/node/libraries
 %{_libdir}/node/libraries/*.js
@@ -98,3 +99,4 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/node
 %attr(755,root,root) %{_bindir}/node-waf
 %{_libdir}/waf/wafadmin/Tools/node_addon.py
+/usr/lib/pkgconfig/nodejs.pc
