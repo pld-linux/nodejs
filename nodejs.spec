@@ -9,6 +9,9 @@ URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
 # Source0-md5:	9566bdbd05c18cc2bbe1fa0fba60dd0a
 Patch0:		%{name}-ev-multiplicity.patch
+Patch1:		%{name}-sharedlib.patch
+Patch2:		%{name}-soname.patch
+Patch3:		%{name}-libdir.patch
 BuildRequires:	c-ares-devel
 BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
@@ -36,6 +39,7 @@ connection is only a small heap allocation.
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
 Requires:	waf
+Requires:	%{name} = %{version}-%{release}
 
 %description devel
 Development headers for nodejs.
@@ -43,6 +47,9 @@ Development headers for nodejs.
 %prep
 %setup -q -n node-v%{version}
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p0
 
 %build
 # build library
@@ -63,9 +70,13 @@ export PYTHONPATH=tools
 	--shared-v8 \
 	--shared-cares \
 	--shared-libev \
+	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
-%waf build
+%waf build \
+	--product-type=cshlib
+
+$CC -o node -Isrc src/node_main.cc -lnode -Lbuild/default
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -73,7 +84,10 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries,%
 
 export PYTHONPATH=tools
 %waf install \
+	--product-type=cshlib \
 	--destdir=$RPM_BUILD_ROOT
+
+install node $RPM_BUILD_ROOT%{_bindir}/node
 
 cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
 cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_libdir}/waf/wafadmin/Tools
@@ -85,11 +99,15 @@ ln -s waf $RPM_BUILD_ROOT%{_bindir}/node-waf
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post   -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
 %dir %{_libdir}/node
+%attr(755,root,root) %{_libdir}/libnode.so.*.*.*
 %dir %{_libdir}/node/libraries
 %{_libdir}/node/libraries/*.js
 %{_mandir}/man1/node.1*
@@ -98,5 +116,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_includedir}/node
 %attr(755,root,root) %{_bindir}/node-waf
+%{_libdir}/libnode.so
 %{_libdir}/waf/wafadmin/Tools/node_addon.py
-/usr/lib/pkgconfig/nodejs.pc
+%{_libdir}/pkgconfig/nodejs.pc
