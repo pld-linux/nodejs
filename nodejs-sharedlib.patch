@@ -1,0 +1,25 @@
+diff --git a/deps/libeio/wscript b/deps/libeio/wscript
+index 5194ead..280dca6 100644
+--- a/deps/libeio/wscript
++++ b/deps/libeio/wscript
+@@ -125,5 +125,7 @@ def build(bld):
+   libeio.install_path = None
+   if bld.env["USE_DEBUG"]:
+     libeio.clone("debug");
++  if Options.options.product_type != 'program':
++    libeio.ccflags = "-fPIC"
+   bld.install_files('${PREFIX}/include/node/', 'eio.h');
+ 
+diff --git a/wscript b/wscript
+index de5ee45..51a46ec 100644
+--- a/wscript
++++ b/wscript
+@@ -619,6 +619,8 @@ def build(bld):
+   http_parser.install_path = None
+   if bld.env["USE_DEBUG"]:
+     http_parser.clone("debug")
++  if product_type_is_lib:
++    http_parser.ccflags = '-fPIC'
+ 
+   ### src/native.cc
+   def make_macros(loc, content):
