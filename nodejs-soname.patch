@@ -1,12 +1,25 @@
-diff --git a/wscript b/wscript
-index de5ee45..c14a5d6 100644
---- a/wscript
-+++ b/wscript
-@@ -761,6 +761,7 @@ def build(bld):
+diff -ur node-v0.4.2-o/wscript node-v0.4.2/wscript
+--- node-v0.4.2-o/wscript	2011-03-02 22:30:21.000000000 -0700
++++ node-v0.4.2/wscript	2011-03-02 22:32:27.000000000 -0700
+@@ -779,6 +779,7 @@
    node.add_objects = 'eio http_parser'
    if product_type_is_lib:
-     node.install_path = '${PREFIX}/lib'
+     node.install_path = '${LIBDIR}'
 +    node.vnum = "4.0.0" # FIXME: Should probably be based on VERSION
    else:
      node.install_path = '${PREFIX}/bin'
    node.chmod = 0755
+diff -ur node-v0.4.2-o/wscript.orig node-v0.4.2/wscript.orig
+--- node-v0.4.2-o/wscript.orig	2011-03-02 22:24:17.000000000 -0700
++++ node-v0.4.2/wscript.orig	2011-03-02 22:30:21.000000000 -0700
+@@ -436,7 +436,6 @@
+   # LFS
+   conf.env.append_value('CPPFLAGS',  '-D_LARGEFILE_SOURCE')
+   conf.env.append_value('CPPFLAGS',  '-D_FILE_OFFSET_BITS=64')
+-  conf.env.append_value('CPPFLAGS',  '-DEV_MULTIPLICITY=0')
+ 
+   # Makes select on windows support more than 64 FDs
+   if sys.platform.startswith("win32"):
+Only in node-v0.4.2: wscript.rej
+Only in node-v0.4.2: wscript.rej~
+Only in node-v0.4.2: wscript~

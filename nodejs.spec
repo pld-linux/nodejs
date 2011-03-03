@@ -1,17 +1,15 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.4.1
+Version:	0.4.2
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	9566bdbd05c18cc2bbe1fa0fba60dd0a
+# Source0-md5:	de4754e23bb382172bc3bbbc288fb884
 Patch0:		%{name}-ev-multiplicity.patch
-Patch1:		%{name}-sharedlib.patch
 Patch2:		%{name}-soname.patch
-Patch3:		%{name}-libdir.patch
 BuildRequires:	c-ares-devel
 BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
@@ -24,6 +22,8 @@ BuildRequires:	v8-devel >= 3.1.5
 BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define _plainlibdir %{_prefix}/lib
 
 %description
 Node's goal is to provide an easy way to build scalable network
@@ -47,9 +47,7 @@ Development headers for nodejs.
 %prep
 %setup -q -n node-v%{version}
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
-%patch3 -p0
 
 %build
 # build library
@@ -80,7 +78,7 @@ $CC -o node -Isrc src/node_main.cc -lnode -Lbuild/default
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries,%{_libdir}/waf/wafadmin/Tools}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries,%{_plainlibdir}/waf/wafadmin/Tools}
 
 export PYTHONPATH=tools
 %waf install \
@@ -90,7 +88,7 @@ export PYTHONPATH=tools
 install node $RPM_BUILD_ROOT%{_bindir}/node
 
 cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
-cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_libdir}/waf/wafadmin/Tools
+cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_plainlibdir}/waf/wafadmin/Tools
 
 rm $RPM_BUILD_ROOT%{_bindir}/node-waf
 # ? really required?
@@ -117,5 +115,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/node
 %attr(755,root,root) %{_bindir}/node-waf
 %{_libdir}/libnode.so
-%{_libdir}/waf/wafadmin/Tools/node_addon.py
+%{_plainlibdir}/waf/wafadmin/Tools/node_addon.py
 %{_libdir}/pkgconfig/nodejs.pc
