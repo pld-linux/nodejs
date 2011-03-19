@@ -1,15 +1,15 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.4.2
+Version:	0.4.3
 Release:	0
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	de4754e23bb382172bc3bbbc288fb884
+# Source0-md5:	a2a6a6699e275a30f6047b1f33281a77
 Patch0:		%{name}-ev-multiplicity.patch
-Patch2:		%{name}-soname.patch
+Patch1:		%{name}-soname.patch
 BuildRequires:	c-ares-devel
 BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
@@ -47,7 +47,7 @@ Development headers for nodejs.
 %prep
 %setup -q -n node-v%{version}
 %patch0 -p1
-%patch2 -p1
+%patch1 -p1
 
 %build
 # build library

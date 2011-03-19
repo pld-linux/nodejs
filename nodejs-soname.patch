@@ -1,25 +1,20 @@
-diff -ur node-v0.4.2-o/wscript node-v0.4.2/wscript
---- node-v0.4.2-o/wscript	2011-03-02 22:30:21.000000000 -0700
-+++ node-v0.4.2/wscript	2011-03-02 22:32:27.000000000 -0700
-@@ -779,6 +779,7 @@
+Only in node-v0.4.3: .lock-wscript
+Only in node-v0.4.3: build
+Only in node-v0.4.3: debugfiles.list
+Only in node-v0.4.3: debuglinks.list
+Only in node-v0.4.3: debugsources.list
+Only in node-v0.4.3/deps/v8/tools: jsmin.pyc
+Only in node-v0.4.3: node
+Only in node-v0.4.3/tools: js2c.pyc
+diff -ur node-v0.4.3-o//wscript node-v0.4.3/wscript
+--- node-v0.4.3-o//wscript	2011-03-18 17:27:18.000000000 -0600
++++ node-v0.4.3/wscript	2011-03-18 22:36:52.000000000 -0600
+@@ -803,6 +803,7 @@
    node.add_objects = 'eio http_parser'
    if product_type_is_lib:
      node.install_path = '${LIBDIR}'
-+    node.vnum = "4.0.0" # FIXME: Should probably be based on VERSION
++    node.vnum = "4.0.0" # Fixme, derive from version
    else:
      node.install_path = '${PREFIX}/bin'
    node.chmod = 0755
-diff -ur node-v0.4.2-o/wscript.orig node-v0.4.2/wscript.orig
---- node-v0.4.2-o/wscript.orig	2011-03-02 22:24:17.000000000 -0700
-+++ node-v0.4.2/wscript.orig	2011-03-02 22:30:21.000000000 -0700
-@@ -436,7 +436,6 @@
-   # LFS
-   conf.env.append_value('CPPFLAGS',  '-D_LARGEFILE_SOURCE')
-   conf.env.append_value('CPPFLAGS',  '-D_FILE_OFFSET_BITS=64')
--  conf.env.append_value('CPPFLAGS',  '-DEV_MULTIPLICITY=0')
- 
-   # Makes select on windows support more than 64 FDs
-   if sys.platform.startswith("win32"):
-Only in node-v0.4.2: wscript.rej
-Only in node-v0.4.2: wscript.rej~
-Only in node-v0.4.2: wscript~
+Only in node-v0.4.3: wscript~
