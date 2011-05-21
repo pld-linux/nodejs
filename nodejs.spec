@@ -1,13 +1,13 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.4.6
-Release:	0
+Version:	0.4.8
+Release:	0.1
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	adc911c886fbe0f283cf994403fd4e3c
+# Source0-md5:	22c9f69370069fe81678592cc8ae48f1
 Patch0:		%{name}-ev-multiplicity.patch
 Patch1:		%{name}-soname.patch
 BuildRequires:	c-ares-devel
