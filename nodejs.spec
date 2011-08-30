@@ -1,13 +1,13 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.4.8
-Release:	0.1
+Version:	0.4.11
+Release:	1
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	22c9f69370069fe81678592cc8ae48f1
+# Source0-md5:	ac4c3eaa0667d5e3eacf56fd26a4eadc
 Patch0:		%{name}-ev-multiplicity.patch
 Patch1:		%{name}-soname.patch
 BuildRequires:	c-ares-devel
@@ -19,7 +19,6 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	v8-devel >= 3.1.5
-BuildRequires:	waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -38,7 +37,6 @@ connection is only a small heap allocation.
 %package devel
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
-Requires:	waf
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
@@ -63,57 +61,36 @@ CXX=%{__cxx}
 %endif
 export CFLAGS LDFLAGS CXXFLAGS CC CXX
 
-export PYTHONPATH=tools
-%waf configure \
+./configure \
 	--shared-v8 \
 	--shared-cares \
 	--shared-libev \
 	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
-%waf build \
-	--product-type=cshlib
-
-$CC -o node -Isrc src/node_main.cc -lnode -Lbuild/default
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_includedir},%{_libdir}/node/libraries,%{_plainlibdir}/waf/wafadmin/Tools}
 
-export PYTHONPATH=tools
-%waf install \
-	--product-type=cshlib \
-	--destdir=$RPM_BUILD_ROOT
-
-install node $RPM_BUILD_ROOT%{_bindir}/node
-
-cp -a lib/*.js $RPM_BUILD_ROOT%{_libdir}/node/libraries
-cp tools/wafadmin/Tools/node_addon.py $RPM_BUILD_ROOT%{_plainlibdir}/waf/wafadmin/Tools
-
-rm $RPM_BUILD_ROOT%{_bindir}/node-waf
-# ? really required?
-ln -s waf $RPM_BUILD_ROOT%{_bindir}/node-waf
+DESTDIR=$RPM_BUILD_ROOT make install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post   -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
 %dir %{_libdir}/node
-%attr(755,root,root) %{_libdir}/libnode.so.*.*.*
-%dir %{_libdir}/node/libraries
-%{_libdir}/node/libraries/*.js
 %{_mandir}/man1/node.1*
 
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/node
 %attr(755,root,root) %{_bindir}/node-waf
-%{_libdir}/libnode.so
-%{_plainlibdir}/waf/wafadmin/Tools/node_addon.py
+%dir %{_libdir}/node/wafadmin
+%dir %{_libdir}/node/wafadmin/Tools
+%{_libdir}/node/wafadmin/*.py
+%{_libdir}/node/wafadmin/Tools/*.py
 %{_libdir}/pkgconfig/nodejs.pc
