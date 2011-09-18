@@ -1,13 +1,13 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.4.11
+Version:	0.4.12
 Release:	1
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
 Source0:	http://nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	ac4c3eaa0667d5e3eacf56fd26a4eadc
+# Source0-md5:	a6375eaa43db5356bf443e25b828ae16
 Patch0:		%{name}-ev-multiplicity.patch
 Patch1:		%{name}-soname.patch
 BuildRequires:	c-ares-devel
@@ -61,32 +61,46 @@ CXX=%{__cxx}
 %endif
 export CFLAGS LDFLAGS CXXFLAGS CC CXX
 
-./configure \
+export PYTHONPATH=tools
+python tools/waf-light configure \
 	--shared-v8 \
 	--shared-cares \
 	--shared-libev \
 	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
-make
+python tools/waf-light build \
+	--product-type='cshlib'
+
+$CC -o build/default/node -Isrc src/node_main.cc -lnode -Lbuild/default
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-DESTDIR=$RPM_BUILD_ROOT make install
+export PYTHONPATH=tools
+python tools/waf-light install \
+	--product-type=cshlib \
+	--destdir=$RPM_BUILD_ROOT
+
+install build/default/node $RPM_BUILD_ROOT%{_bindir}/node
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post   -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
 %dir %{_libdir}/node
+%attr(755,root,root) %{_libdir}/libnode.so.*.*.*
 %{_mandir}/man1/node.1*
 
 %files devel
 %defattr(644,root,root,755)
+%{_libdir}/libnode.so
 %{_includedir}/node
 %attr(755,root,root) %{_bindir}/node-waf
 %dir %{_libdir}/node/wafadmin
