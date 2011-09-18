@@ -1,4 +1,3 @@
-
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.4.12
@@ -21,8 +20,6 @@ BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	v8-devel >= 3.1.5
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define _plainlibdir %{_prefix}/lib
 
 %description
 Node's goal is to provide an easy way to build scalable network
@@ -53,36 +50,35 @@ CFLAGS="%{rpmcflags}"
 CXXFLAGS="%{rpmcxxflags}"
 LDFLAGS="%{rpmcflags}"
 %if "%{pld_release}" == "ac"
-CC=%{__cc}4
-CXX=%{__cxx}4
+CC="%{__cc}4"
+CXX="%{__cxx}4"
 %else
-CC=%{__cc}
-CXX=%{__cxx}
+CC="%{__cc}"
+CXX="%{__cxx}"
 %endif
 export CFLAGS LDFLAGS CXXFLAGS CC CXX
 
 export PYTHONPATH=tools
-python tools/waf-light configure \
+%{__python} tools/waf-light configure \
 	--shared-v8 \
 	--shared-cares \
 	--shared-libev \
 	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
-python tools/waf-light build \
+%{__python} tools/waf-light build \
 	--product-type='cshlib'
 
 $CC -o build/default/node -Isrc src/node_main.cc -lnode -Lbuild/default
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 export PYTHONPATH=tools
-python tools/waf-light install \
+%{__python} tools/waf-light install \
 	--product-type=cshlib \
 	--destdir=$RPM_BUILD_ROOT
 
-install build/default/node $RPM_BUILD_ROOT%{_bindir}/node
+install -p build/default/node $RPM_BUILD_ROOT%{_bindir}/node
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -94,8 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
-%dir %{_libdir}/node
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
+%ghost %{_libdir}/libnode.so.4
+%dir %{_libdir}/node
 %{_mandir}/man1/node.1*
 
 %files devel
@@ -107,4 +104,4 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/node/wafadmin/Tools
 %{_libdir}/node/wafadmin/*.py
 %{_libdir}/node/wafadmin/Tools/*.py
-%{_libdir}/pkgconfig/nodejs.pc
+%{_pkgconfigdir}/nodejs.pc
