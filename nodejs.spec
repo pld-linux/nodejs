@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.4.12
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
@@ -79,6 +79,8 @@ export PYTHONPATH=tools
 	--destdir=$RPM_BUILD_ROOT
 
 install -p build/default/node $RPM_BUILD_ROOT%{_bindir}/node
+
+chmod a+x $RPM_BUILD_ROOT%{_libdir}/*.so*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
