@@ -1,0 +1,11 @@
+--- ../node-v0.4.11.original/lib/module.js	2011-08-17 18:18:10.000000000 -0700
++++ ./lib/module.js	2011-08-22 14:37:06.590597180 -0700
+@@ -422,7 +422,7 @@
+ };
+ 
+ Module._initPaths = function() {
+-  var paths = [path.resolve(process.execPath, '..', '..', 'lib', 'node')];
++  var paths = ["/usr/lib/node", "/usr/lib64/node"];
+ 
+   if (process.env['HOME']) {
+     paths.unshift(path.resolve(process.env['HOME'], '.node_libraries'));
