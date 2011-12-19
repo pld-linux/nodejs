@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.6.6
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 URL:		http://nodejs.org/
@@ -116,12 +116,14 @@ export PYTHONPATH=tools
 	--product-type=cshlib \
 	--destdir=$RPM_BUILD_ROOT
 
+chmod a+x $RPM_BUILD_ROOT%{_libdir}/*.so*
+
 # create pkgconfig
 install -d $RPM_BUILD_ROOT%{_pkgconfigdir}
 cat <<'EOF' > $RPM_BUILD_ROOT%{_pkgconfigdir}/%{name}.pc
 version=%{version}
 prefix=/usr
-libdir=${prefix}/lib
+libdir=${prefix}/%{_lib}
 includedir=${prefix}/include/node
 
 Name: nodejs
