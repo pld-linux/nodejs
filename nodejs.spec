@@ -1,12 +1,12 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.6.6
-Release:	2
+Version:	0.6.8
+Release:	1
 License:	BSD
 Group:		Libraries
-URL:		http://nodejs.org/
-Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	43836ebd6e8e9059c4584e3b5ab50009
+URL:		http://www.nodejs.org/
+Source0:	http://www.nodejs.org/dist/node-v%{version}.tar.gz
+# Source0-md5:	9fd7baa2d27b848c3134e6ae35bb87b2
 Patch1:		%{name}-soname.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -25,14 +25,11 @@ ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Node's goal is to provide an easy way to build scalable network
-programs. In the above example, the two second delay does not prevent
-the server from handling new requests. Node tells the operating system
-(through epoll, kqueue, /dev/poll, or select) that it should be
-notified when the 2 seconds are up or if a new connection is made --
-then it goes to sleep. If someone new connects, then it executes the
-callback, if the timeout expires, it executes the inner callback. Each
-connection is only a small heap allocation.
+Node.js is a platform built on Chrome's JavaScript runtime for easily
+building fast, scalable network applications. Node.js uses an
+event-driven, non-blocking I/O model that makes it lightweight and
+efficient, perfect for data-intensive real-time applications that run
+across distributed devices.
 
 %package devel
 Summary:	Development headers for nodejs
@@ -110,6 +107,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
+
 # install shared lib
 export PYTHONPATH=tools
 %{__python} tools/waf-light install \
@@ -122,7 +121,7 @@ chmod a+x $RPM_BUILD_ROOT%{_libdir}/*.so*
 install -d $RPM_BUILD_ROOT%{_pkgconfigdir}
 cat <<'EOF' > $RPM_BUILD_ROOT%{_pkgconfigdir}/%{name}.pc
 version=%{version}
-prefix=/usr
+prefix=%{_prefix}
 libdir=${prefix}/%{_lib}
 includedir=${prefix}/include/node
 
@@ -157,6 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.md AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
+%attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
 %ghost %{_libdir}/libnode.so.4
 %dir %{_libdir}/node
