@@ -39,6 +39,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-waf = %{version}-%{release}
 Requires:	gcc
 Requires:	libstdc++-devel
+Requires:	v8-devel
 
 %description devel
 Development headers for nodejs.
