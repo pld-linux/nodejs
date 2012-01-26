@@ -13,7 +13,6 @@ Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
 BuildRequires:	c-ares-devel >= 1.7.4
-BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 4.0.0
@@ -21,6 +20,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
+BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	v8-devel >= 3.6
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -36,6 +36,9 @@ across distributed devices.
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-waf = %{version}-%{release}
+Requires:	gcc
+Requires:	libstdc++-devel
 
 %description devel
 Development headers for nodejs.
@@ -55,9 +58,6 @@ This package contains the documentation for nodejs.
 Summary:	Evented I/O for V8 JavaScript - customized WAF build system
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-devel
-Requires:	gcc
-Requires:	libstdc++-devel
 
 %description waf
 Node.js is a server-side JavaScript environment that uses an
