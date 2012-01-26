@@ -5,7 +5,7 @@
  
  Module._initPaths = function() {
 -  var paths = [path.resolve(process.execPath, '..', '..', 'lib', 'node')];
-+  var paths = ["/usr/lib/node"];
++  var paths = ["/usr/lib/node", "/usr/lib/node_modules"];
  
    if (process.env['HOME']) {
      paths.unshift(path.resolve(process.env['HOME'], '.node_libraries'));

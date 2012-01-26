@@ -1,9 +1,9 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.6.8
-Release:	1
-License:	BSD
-Group:		Libraries
+Release:	2
+License:	BSD and MIT and ASL 2.0 and GPLv3
+Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://www.nodejs.org/dist/node-v%{version}.tar.gz
 # Source0-md5:	9fd7baa2d27b848c3134e6ae35bb87b2
@@ -54,6 +54,9 @@ This package contains the documentation for nodejs.
 Summary:	Evented I/O for V8 JavaScript - customized WAF build system
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-devel
+Requires:	gcc
+Requires:	libstdc++-devel
 
 %description waf
 Node.js is a server-side JavaScript environment that uses an
@@ -107,7 +110,14 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+# for compat of fedora derivered scripts (shebangs)
 ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
+
+# globally installed node modules (noarch)
+install -d $RPM_BUILD_ROOT%{_prefix}/lib/node_modules
+
+# default searchpaths
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_prefix}/lib}/node
 
 # install shared lib
 export PYTHONPATH=tools
@@ -158,8 +168,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
-%ghost %{_libdir}/libnode.so.4
+%ghost %{_libdir}/libnode.so.6
 %dir %{_libdir}/node
+%dir %{_prefix}/lib/node
+%dir %{_prefix}/lib/node_modules
 %{_mandir}/man1/node.1*
 
 %files devel
