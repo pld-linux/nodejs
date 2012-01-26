@@ -13,6 +13,7 @@ Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
 BuildRequires:	c-ares-devel >= 1.7.4
+BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
 BuildRequires:	libev-devel >= 4.0.0
@@ -75,9 +76,10 @@ used by Node.js and many of its modules.
 %patch2 -p1
 %endif
 
+# fix #!/usr/bin/env python -> #!/usr/bin/python:
+grep -rl 'bin/env python' tools | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
+
 %build
-%undefine	with_ccache
-# build library
 CFLAGS="%{rpmcflags} -fPIC"
 CXXFLAGS="%{rpmcxxflags} -fPIC"
 LDFLAGS="%{rpmcflags}"
@@ -100,6 +102,7 @@ export PYTHONPATH=tools
 	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
+# build library
 %{__make} dynamiclib
 %{__make} program
 
@@ -141,6 +144,11 @@ Description: Evented I/O for V8 JavaScript.
 Version: ${version}
 Cflags: -I${includedir}
 EOF
+
+%py_ocomp $RPM_BUILD_ROOT%{_libdir}/node/wafadmin
+%py_comp $RPM_BUILD_ROOT%{_libdir}/node/wafadmin
+# TODO: check it first
+#%%py_postclean %{_libdir}/node/wafadmin
 
 # install documentation
 install -d $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/html
@@ -185,5 +193,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/node-waf
 %dir %{_libdir}/node/wafadmin
 %dir %{_libdir}/node/wafadmin/Tools
+%{_libdir}/node/wafadmin/*.py[co]
 %{_libdir}/node/wafadmin/*.py
 %{_libdir}/node/wafadmin/Tools/*.py
+%{_libdir}/node/wafadmin/Tools/*.py[co]
