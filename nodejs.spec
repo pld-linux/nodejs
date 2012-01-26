@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.6.8
-Release:	2
+Release:	3
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
@@ -96,6 +96,7 @@ export PYTHONPATH=tools
 	--shared-cares \
 	--shared-v8 \
 	--shared-zlib \
+	--without-npm \
 	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
@@ -150,11 +151,6 @@ mv html/api/*.markdown api
 mv html/api/api/* html/api
 rm -rf html/api/api
 cd -
-
-# remove NPM; it's buggy in 0.6.3
-# but really we package npm from separate spec
-rm -rf $RPM_BUILD_ROOT%{_libdir}/node_modules
-rm $RPM_BUILD_ROOT%{_bindir}/npm
 
 %clean
 rm -rf $RPM_BUILD_ROOT
