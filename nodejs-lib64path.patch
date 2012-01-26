@@ -9,3 +9,14 @@
  
    if (process.env['HOME']) {
      paths.unshift(path.resolve(process.env['HOME'], '.node_libraries'));
+--- node-v0.6.8/./tools/node-waf~	2012-01-20 04:15:27.000000000 +0200
++++ node-v0.6.8/./tools/node-waf	2012-01-26 17:23:09.336122520 +0200
+@@ -5,7 +5,7 @@
+ join = os.path.join
+ bindir = os.path.dirname(os.path.realpath(__file__))
+ prefix = join(bindir, "..")
+-wafdir = join(prefix, "lib", "node")
++wafdir = join(prefix, "lib64", "node")
+ 
+ w = join(wafdir, 'wafadmin')
+ t = join(w, 'Tools')
