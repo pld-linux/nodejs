@@ -1,12 +1,3 @@
-Only in node-v0.4.3: .lock-wscript
-Only in node-v0.4.3: build
-Only in node-v0.4.3: debugfiles.list
-Only in node-v0.4.3: debuglinks.list
-Only in node-v0.4.3: debugsources.list
-Only in node-v0.4.3/deps/v8/tools: jsmin.pyc
-Only in node-v0.4.3: node
-Only in node-v0.4.3/tools: js2c.pyc
-diff -ur node-v0.4.3-o//wscript node-v0.4.3/wscript
 --- node-v0.4.3-o//wscript	2011-03-18 17:27:18.000000000 -0600
 +++ node-v0.4.3/wscript	2011-03-18 22:36:52.000000000 -0600
 @@ -803,6 +803,7 @@
@@ -17,4 +8,3 @@ diff -ur node-v0.4.3-o//wscript node-v0.4.3/wscript
    else:
      node.install_path = '${PREFIX}/bin'
    node.chmod = 0755
-Only in node-v0.4.3: wscript~
