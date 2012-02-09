@@ -1,12 +1,12 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.6.8
-Release:	3
+Version:	0.6.10
+Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
-Source0:	http://www.nodejs.org/dist/node-v%{version}.tar.gz
-# Source0-md5:	9fd7baa2d27b848c3134e6ae35bb87b2
+Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
+# Source0-md5:	8a74fd5d48c2c7c64abc60b2b8f3fbc7
 Patch1:		%{name}-soname.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -92,6 +92,9 @@ CC="%{__cc}"
 CXX="%{__cxx}"
 %endif
 export CFLAGS LDFLAGS CXXFLAGS CC CXX
+
+# Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
+CC=${CC#ccache }
 
 # NOT autoconf so dont use macro
 export PYTHONPATH=tools
