@@ -1,8 +1,3 @@
-# TODO
-# - fix linking (-lz missing):
-#i686-pld-linux-g++ Release/src/node_main_4.o Release/src/node_4.o Release/src/node_buffer_4.o Release/src/node_javascript_4.o Release/src/node_extensions_4.o Release/src/node_http_parser_4.o Release/src/node_constants_4.o Release/src/node_file_4.o Release/src/node_script_4.o Release/src/node_os_4.o Release/src/node_dtrace_4.o Release/src/node_string_4.o Release/src/node_zlib_4.o Release/src/timer_wrap_4.o Release/src/handle_wrap_4.o Release/src/stream_wrap_4.o Release/src/tcp_wrap_4.o Release/src/udp_wrap_4.o Release/src/pipe_wrap_4.o Release/src/cares_wrap_4.o Rel/usr/bin/ld: Release/src/node_zlib_4.o: undefined reference to symbol 'inflate'
-#/usr/bin/ld: note: 'inflate' is defined in DSO /lib/libz.so.1 so try adding it to the linker command line
-#/lib/libz.so.1: could not read symbols: Invalid operation
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.6.15
@@ -17,6 +12,8 @@ Patch1:		%{name}-soname.patch
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
+# Fix linking of zlib
+Patch4:		%{name}-shared-zlib.patch
 BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
@@ -81,6 +78,8 @@ used by Node.js and many of its modules.
 %else
 %patch2 -p1
 %endif
+
+%patch4 -p1
 
 # fix #!/usr/bin/env python -> #!/usr/bin/python:
 grep -rl 'bin/env python' tools | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
