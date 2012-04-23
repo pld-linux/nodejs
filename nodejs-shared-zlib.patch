@@ -1,11 +1,3 @@
-Common subdirectories: node-v0.6.15-o/benchmark and node-v0.6.15/benchmark
-Common subdirectories: node-v0.6.15-o/deps and node-v0.6.15/deps
-Common subdirectories: node-v0.6.15-o/doc and node-v0.6.15/doc
-Common subdirectories: node-v0.6.15-o/lib and node-v0.6.15/lib
-Common subdirectories: node-v0.6.15-o/src and node-v0.6.15/src
-Common subdirectories: node-v0.6.15-o/test and node-v0.6.15/test
-Common subdirectories: node-v0.6.15-o/tools and node-v0.6.15/tools
-diff -u node-v0.6.15-o/wscript node-v0.6.15/wscript
 --- node-v0.6.15-o/wscript	2012-04-21 20:16:10.000000000 -0600
 +++ node-v0.6.15/wscript	2012-04-21 20:16:34.000000000 -0600
 @@ -284,7 +284,7 @@
