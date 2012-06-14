@@ -159,14 +159,10 @@ EOF
 #%%py_postclean %{_libdir}/node/wafadmin
 
 # install documentation
-install -d $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/html
-cp -a doc/* $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/html
-cd $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
-install -d api
-mv html/api/*.markdown api
-mv html/api/api/* html/api
-rm -rf html/api/api
-cd -
+install -d $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
+cp -a doc/api/* $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
+rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.markdown
+rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.json
 
 %clean
 rm -rf $RPM_BUILD_ROOT
