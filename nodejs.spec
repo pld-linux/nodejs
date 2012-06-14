@@ -14,6 +14,7 @@ Patch2:		%{name}-libpath.patch
 Patch3:		%{name}-lib64path.patch
 # Fix linking of zlib
 Patch4:		%{name}-shared-zlib.patch
+Patch5:		uv-fpic.patch
 BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libeio-devel
@@ -78,14 +79,15 @@ used by Node.js and many of its modules.
 %else
 %patch2 -p1
 %endif
-
 %patch4 -p1
+%patch5 -p1
 
 # fix #!/usr/bin/env python -> #!/usr/bin/python:
 grep -rl 'bin/env python' tools | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
 
 %build
 CFLAGS="%{rpmcflags} -fPIC"
+CPPFLAGS="%{rpmcppflags} -fPIC"
 CXXFLAGS="%{rpmcxxflags} -fPIC"
 LDFLAGS="%{rpmcflags}"
 %if "%{pld_release}" == "ac"
@@ -95,7 +97,7 @@ CXX="%{__cxx}4"
 CC="%{__cc}"
 CXX="%{__cxx}"
 %endif
-export CFLAGS LDFLAGS CXXFLAGS CC CXX
+export CFLAGS LDFLAGS CXXFLAGS CC CXX LINKFLAGS_UV
 
 # Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
 CC=${CC#ccache }
