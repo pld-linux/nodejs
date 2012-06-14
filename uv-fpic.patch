@@ -1,0 +1,10 @@
+--- node-v0.6.19/deps/uv/config-unix.mk~	2012-06-06 03:46:27.000000000 +0300
++++ node-v0.6.19/deps/uv/config-unix.mk	2012-06-14 22:23:21.230218071 +0300
+@@ -26,6 +26,7 @@
+ 
+ CPPFLAGS += -D_LARGEFILE_SOURCE
+ CPPFLAGS += -D_FILE_OFFSET_BITS=64
++CPPFLAGS += -fPIC
+ 
+ OBJS += src/unix/core.o
+ OBJS += src/unix/dl.o
