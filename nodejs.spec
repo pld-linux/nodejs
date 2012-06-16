@@ -124,6 +124,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
+
 # for compat of fedora derivered scripts (shebangs)
 ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
 
@@ -183,6 +185,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_prefix}/lib/node
 %dir %{_prefix}/lib/node_modules
 %{_mandir}/man1/node.1*
+%{_mandir}/man1/nodejs.1
 
 %files devel
 %defattr(644,root,root,755)
