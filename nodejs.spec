@@ -1,19 +1,17 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.6.19
+Version:	0.6.20
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	f5669a9717422b811c6bad1cc961b1e5
+# Source0-md5:	fcf8e0f2981f9dd66606a2162a2df55d
 Patch1:		%{name}-soname.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
-# Fix linking of zlib
-Patch4:		%{name}-shared-zlib.patch
 Patch5:		uv-fpic.patch
 BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
@@ -79,7 +77,6 @@ used by Node.js and many of its modules.
 %else
 %patch2 -p1
 %endif
-%patch4 -p1
 %patch5 -p1
 
 # fix #!/usr/bin/env python -> #!/usr/bin/python:
