@@ -1,12 +1,12 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.6.20
+Version:	0.6.21
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	fcf8e0f2981f9dd66606a2162a2df55d
+# Source0-md5:	0da985a0bf820400af92363b9f453fe4
 Patch1:		%{name}-soname.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
