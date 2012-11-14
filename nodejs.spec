@@ -178,7 +178,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
 %ghost %{_libdir}/libnode.so.6
+%if "%{_lib}" != "lib"
 %dir %{_libdir}/node
+%endif
 %dir %{_prefix}/lib/node
 %dir %{_prefix}/lib/node_modules
 %{_mandir}/man1/node.1*
