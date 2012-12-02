@@ -1,0 +1,112 @@
+diff -ur node-v0.8.15-o/Makefile node-v0.8.15/Makefile
+--- node-v0.8.15-o/Makefile	2012-11-26 08:51:39.000000000 -0700
++++ node-v0.8.15/Makefile	2012-12-02 10:04:42.000000000 -0700
+@@ -39,11 +39,13 @@
+ out/Makefile: common.gypi deps/uv/uv.gyp deps/http_parser/http_parser.gyp deps/zlib/zlib.gyp deps/v8/build/common.gypi deps/v8/tools/gyp/v8.gyp node.gyp config.gypi
+ 	$(PYTHON) tools/gyp_node -f make
+ 
+-install: all
+-	$(PYTHON) tools/install.py $@ $(DESTDIR)
++install: all justinstall
++
++justinstall:
++	$(PYTHON) tools/install.py install $(DESTDIR) $(LIBDIR)
+ 
+ uninstall:
+-	$(PYTHON) tools/install.py $@ $(DESTDIR)
++	$(PYTHON) tools/install.py $@ $(DESTDIR) $(LIBDIR)
+ 
+ clean:
+ 	-rm -rf out/Makefile node node_g out/$(BUILDTYPE)/node blog.html email.md
+diff -ur node-v0.8.15-o/node.gyp node-v0.8.15/node.gyp
+--- node-v0.8.15-o/node.gyp	2012-11-26 08:51:39.000000000 -0700
++++ node-v0.8.15/node.gyp	2012-12-02 10:04:42.000000000 -0700
+@@ -57,6 +57,36 @@
+       'type': 'executable',
+ 
+       'dependencies': [
++        'libnode',
++        'deps/uv/uv.gyp:uv',
++        'node_js2c#host',
++      ],
++
++      'include_dirs': [
++        'src',
++        'deps/uv/src/ares',
++        '<(SHARED_INTERMEDIATE_DIR)' # for node_natives.h
++      ],
++
++      'sources': [
++        'src/node_main.cc',
++        # node.gyp is added to the project by default.
++        'common.gypi',
++      ],
++
++      'defines': [
++        'NODE_WANT_INTERNALS=1',
++        'ARCH="<(target_arch)"',
++        'PLATFORM="<(OS)"',
++      ],
++    },
++    {
++      'target_name': 'libnode',
++      'type': 'shared_library',
++      'product_extension': 'so.8.0.0',
++      'soname_version': '8.0.0',
++
++      'dependencies': [
+         'deps/http_parser/http_parser.gyp:http_parser',
+         'deps/uv/uv.gyp:uv',
+         'node_js2c#host',
+@@ -79,7 +109,6 @@
+         'src/node_file.cc',
+         'src/node_http_parser.cc',
+         'src/node_javascript.cc',
+-        'src/node_main.cc',
+         'src/node_os.cc',
+         'src/node_script.cc',
+         'src/node_stat_watcher.cc',
+diff -ur node-v0.8.15-o/tools/install.py node-v0.8.15/tools/install.py
+--- node-v0.8.15-o/tools/install.py	2012-12-01 22:39:50.000000000 -0700
++++ node-v0.8.15/tools/install.py	2012-12-02 10:04:52.000000000 -0700
+@@ -10,6 +10,7 @@
+ # set at init time
+ dst_dir = None
+ node_prefix = None # dst_dir without DESTDIR prefix
++lib_dir = 'lib'
+ target_defaults = None
+ variables = None
+ 
+@@ -168,6 +169,7 @@
+     assert(0) # unhandled action type
+ 
+ def files(action):
++  global lib_dir
+   action(['deps/uv/include/ares.h',
+           'deps/uv/include/ares_version.h',
+           'deps/uv/include/uv.h',
+@@ -193,6 +195,7 @@
+           'include/node/uv-private/')
+   action(['doc/node.1'], 'share/man/man1/')
+   action(['out/Release/node'], 'bin/node')
++  action(['out/Release/lib.target/libnode.so.8.0.0'], lib_dir + '/libnode.so.8.0.0')
+ 
+   # install unconditionally, checking if the platform supports dtrace doesn't
+   # work when cross-compiling and besides, there's at least one linux flavor
+@@ -203,7 +206,7 @@
+   if 'true' == variables.get('node_install_npm'): npm_files(action)
+ 
+ def run(args):
+-  global dst_dir, node_prefix, target_defaults, variables
++  global dst_dir, node_prefix, target_defaults, variables, lib_dir
+ 
+   # chdir to the project's top-level directory
+   os.chdir(abspath(os.path.dirname(__file__), '..'))
+@@ -215,6 +218,7 @@
+   # argv[2] is a custom install prefix for packagers (think DESTDIR)
+   dst_dir = node_prefix = variables.get('node_prefix') or '/usr/local'
+   if len(args) > 2: dst_dir = abspath(args[2] + '/' + dst_dir)
++  if len(args) > 3: lib_dir = args[3]
+ 
+   cmd = args[1] if len(args) > 1 else 'install'
+   if cmd == 'install': return files(install)

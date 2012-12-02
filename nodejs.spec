@@ -1,28 +1,25 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.6.21
+Version:	0.8.15
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	0da985a0bf820400af92363b9f453fe4
-Patch1:		%{name}-soname.patch
+# Source0-md5:	6cb31180b07475db103e694f65e8bb9b
+Patch1:     %{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
 Patch5:		uv-fpic.patch
-BuildRequires:	c-ares-devel >= 1.7.4
 BuildRequires:	gcc >= 5:4.0
-BuildRequires:	libeio-devel
-BuildRequires:	libev-devel >= 4.0.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
-BuildRequires:	v8-devel >= 3.6
+BuildRequires:	v8-devel >= 3.11.10.25
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -83,18 +80,6 @@ used by Node.js and many of its modules.
 grep -rl 'bin/env python' tools | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
 
 %build
-CFLAGS="%{rpmcflags} -fPIC"
-CPPFLAGS="%{rpmcppflags} -fPIC"
-CXXFLAGS="%{rpmcxxflags} -fPIC"
-LDFLAGS="%{rpmcflags}"
-%if "%{pld_release}" == "ac"
-CC="%{__cc}4"
-CXX="%{__cxx}4"
-%else
-CC="%{__cc}"
-CXX="%{__cxx}"
-%endif
-export CFLAGS LDFLAGS CXXFLAGS CC CXX LINKFLAGS_UV
 
 # Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
 CC=${CC#ccache }
@@ -102,24 +87,42 @@ CC=${CC#ccache }
 # NOT autoconf so dont use macro
 export PYTHONPATH=tools
 ./configure \
-	--shared-cares \
 	--shared-v8 \
 	--shared-zlib \
+	--shared-openssl \
 	--without-npm \
-	--libdir=%{_libdir} \
 	--prefix=%{_prefix}
 
-# build library
-%{__make} dynamiclib
-%{__make} program
-
-# relink with shared lib
-$CC -o out/Release/node src/node_main.cc -Isrc -Ideps/uv/include -lnode -Lout/Release
+%make -C out \
+    BUILDTYPE=Release \
+    V=1 \
+    CFLAGS.host="%{rpmcflags} -fPIC" \
+    CXXFLAGS.host="%{rpmcppflags} -fPIC" \
+    LDFLAGS.host="%{rpmcflags}" \
+    CFLAGS.target="%{rpmcflags} -fPIC" \
+    CXXFLAGS.target="%{rpmcppflags} -fPIC" \
+    LDFLAGS.target="%{rpmcflags}" \
+%if "%{pld_release}" == "ac"
+    CC.host="%{__cc}4" \
+    CXX.host="%{__cxx}4" \
+    CC.target="%{__cc}4" \
+    CXX.target="%{__cxx}4" \
+%else
+    CC.host="%{__cc}" \
+    CXX.host="%{__cxx}" \
+    CC.target="%{__cc}" \
+    CXX.target="%{__cxx}"
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT/%{_prefix}/lib/node/wafadmin
+%{__make} justinstall \
+	DESTDIR=$RPM_BUILD_ROOT \
+    LIBDIR=%{_lib}
+
+ln -s libnode.so.8.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.8
+ln -s libnode.so.8.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
 echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
@@ -131,14 +134,6 @@ install -d $RPM_BUILD_ROOT%{_prefix}/lib/node_modules
 
 # default searchpaths
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_prefix}/lib}/node
-
-# install shared lib
-export PYTHONPATH=tools
-%{__python} tools/waf-light install \
-	--product-type=cshlib \
-	--destdir=$RPM_BUILD_ROOT
-
-chmod a+x $RPM_BUILD_ROOT%{_libdir}/*.so*
 
 # create pkgconfig
 install -d $RPM_BUILD_ROOT%{_pkgconfigdir}
@@ -177,7 +172,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
-%ghost %{_libdir}/libnode.so.6
+%ghost %{_libdir}/libnode.so.8
 %if "%{_lib}" != "lib"
 %dir %{_libdir}/node
 %endif
