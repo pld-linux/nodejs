@@ -1,9 +1,9 @@
-diff -ur node-v0.8.15-o/Makefile node-v0.8.15/Makefile
---- node-v0.8.15-o/Makefile	2012-11-26 08:51:39.000000000 -0700
-+++ node-v0.8.15/Makefile	2012-12-02 10:04:42.000000000 -0700
-@@ -39,11 +39,13 @@
- out/Makefile: common.gypi deps/uv/uv.gyp deps/http_parser/http_parser.gyp deps/zlib/zlib.gyp deps/v8/build/common.gypi deps/v8/tools/gyp/v8.gyp node.gyp config.gypi
- 	$(PYTHON) tools/gyp_node -f make
+diff -ur node-v0.9.9-o/Makefile node-v0.9.9/Makefile
+--- node-v0.9.9-o/Makefile	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/Makefile	2013-02-15 21:15:55.000000000 -0700
+@@ -52,11 +52,13 @@
+ config.gypi: configure
+ 	$(PYTHON) ./configure
  
 -install: all
 -	$(PYTHON) tools/install.py $@ $(DESTDIR)
@@ -18,25 +18,29 @@ diff -ur node-v0.8.15-o/Makefile node-v0.8.15/Makefile
  
  clean:
  	-rm -rf out/Makefile node node_g out/$(BUILDTYPE)/node blog.html email.md
-diff -ur node-v0.8.15-o/node.gyp node-v0.8.15/node.gyp
---- node-v0.8.15-o/node.gyp	2012-11-26 08:51:39.000000000 -0700
-+++ node-v0.8.15/node.gyp	2012-12-02 10:04:42.000000000 -0700
-@@ -57,6 +57,36 @@
+diff -ur node-v0.9.9-o/node.gyp node-v0.9.9/node.gyp
+--- node-v0.9.9-o/node.gyp	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/node.gyp	2013-02-15 21:15:55.000000000 -0700
+@@ -67,17 +67,35 @@
        'type': 'executable',
  
        'dependencies': [
-+        'libnode',
-+        'deps/uv/uv.gyp:uv',
-+        'node_js2c#host',
-+      ],
-+
-+      'include_dirs': [
-+        'src',
-+        'deps/uv/src/ares',
-+        '<(SHARED_INTERMEDIATE_DIR)' # for node_natives.h
-+      ],
-+
-+      'sources': [
+-        'node_js2c#host',
++        'libnode'
+       ],
+ 
+-      'include_dirs': [
+-        'src',
+-        'tools/msvs/genfiles',
+-        'deps/uv/src/ares',
+-        '<(SHARED_INTERMEDIATE_DIR)' # for node_natives.h
++      'conditions': [
++        [ 'node_shared_libuv=="false"', {
++          'dependencies': [ 'deps/uv/uv.gyp:libuv' ],
++        }],
+       ],
+ 
+       'sources': [
 +        'src/node_main.cc',
 +        # node.gyp is added to the project by default.
 +        'common.gypi',
@@ -51,14 +55,15 @@ diff -ur node-v0.8.15-o/node.gyp node-v0.8.15/node.gyp
 +    {
 +      'target_name': 'libnode',
 +      'type': 'shared_library',
-+      'product_extension': 'so.8.0.0',
-+      'soname_version': '8.0.0',
++      'product_extension': 'so.9.0.0',
++      'soname_version': '9.0.0',
++      'cflags': ['-fPIC'],
 +
-+      'dependencies': [
-         'deps/http_parser/http_parser.gyp:http_parser',
-         'deps/uv/uv.gyp:uv',
-         'node_js2c#host',
-@@ -79,7 +109,6 @@
++      'sources': [
+         'src/fs_event_wrap.cc',
+         'src/cares_wrap.cc',
+         'src/handle_wrap.cc',
+@@ -88,7 +106,6 @@
          'src/node_file.cc',
          'src/node_http_parser.cc',
          'src/node_javascript.cc',
@@ -66,34 +71,525 @@ diff -ur node-v0.8.15-o/node.gyp node-v0.8.15/node.gyp
          'src/node_os.cc',
          'src/node_script.cc',
          'src/node_stat_watcher.cc',
-diff -ur node-v0.8.15-o/tools/install.py node-v0.8.15/tools/install.py
---- node-v0.8.15-o/tools/install.py	2012-12-01 22:39:50.000000000 -0700
-+++ node-v0.8.15/tools/install.py	2012-12-02 10:04:52.000000000 -0700
-@@ -10,6 +10,7 @@
- # set at init time
- dst_dir = None
- node_prefix = None # dst_dir without DESTDIR prefix
-+lib_dir = 'lib'
- target_defaults = None
- variables = None
+@@ -137,6 +154,17 @@
+         'common.gypi',
+       ],
  
-@@ -168,6 +169,7 @@
++      'include_dirs': [
++        'src',
++        'tools/msvs/genfiles',
++        'deps/uv/src/ares',
++        '<(SHARED_INTERMEDIATE_DIR)' # for node_natives.h
++      ],
++
++      'dependencies': [
++        'node_js2c#host',
++      ],
++
+       'defines': [
+         'NODE_WANT_INTERNALS=1',
+         'ARCH="<(target_arch)"',
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/checkerbase.py node-v0.9.9/tools/closure_linter/closure_linter/checkerbase.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/checkerbase.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/checkerbase.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/checker.py node-v0.9.9/tools/closure_linter/closure_linter/checker.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/checker.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/checker.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/erroraccumulator.py node-v0.9.9/tools/closure_linter/closure_linter/common/erroraccumulator.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/erroraccumulator.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/erroraccumulator.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/errorhandler.py node-v0.9.9/tools/closure_linter/closure_linter/common/errorhandler.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/errorhandler.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/errorhandler.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/errorprinter.py node-v0.9.9/tools/closure_linter/closure_linter/common/errorprinter.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/errorprinter.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/errorprinter.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/error.py node-v0.9.9/tools/closure_linter/closure_linter/common/error.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/error.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/error.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/filetestcase.py node-v0.9.9/tools/closure_linter/closure_linter/common/filetestcase.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/filetestcase.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/filetestcase.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/htmlutil.py node-v0.9.9/tools/closure_linter/closure_linter/common/htmlutil.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/htmlutil.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/htmlutil.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/__init__.py node-v0.9.9/tools/closure_linter/closure_linter/common/__init__.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/__init__.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/__init__.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1 +1 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/lintrunner.py node-v0.9.9/tools/closure_linter/closure_linter/common/lintrunner.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/lintrunner.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/lintrunner.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/matcher.py node-v0.9.9/tools/closure_linter/closure_linter/common/matcher.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/matcher.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/matcher.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/position.py node-v0.9.9/tools/closure_linter/closure_linter/common/position.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/position.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/position.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/simplefileflags.py node-v0.9.9/tools/closure_linter/closure_linter/common/simplefileflags.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/simplefileflags.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/simplefileflags.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/tokenizer.py node-v0.9.9/tools/closure_linter/closure_linter/common/tokenizer.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/tokenizer.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/tokenizer.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/common/tokens.py node-v0.9.9/tools/closure_linter/closure_linter/common/tokens.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/common/tokens.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/common/tokens.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/ecmalintrules.py node-v0.9.9/tools/closure_linter/closure_linter/ecmalintrules.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/ecmalintrules.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/ecmalintrules.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/ecmametadatapass.py node-v0.9.9/tools/closure_linter/closure_linter/ecmametadatapass.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/ecmametadatapass.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/ecmametadatapass.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/error_fixer.py node-v0.9.9/tools/closure_linter/closure_linter/error_fixer.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/error_fixer.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/error_fixer.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/errorrules.py node-v0.9.9/tools/closure_linter/closure_linter/errorrules.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/errorrules.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/errorrules.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/errors.py node-v0.9.9/tools/closure_linter/closure_linter/errors.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/errors.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/errors.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/fixjsstyle.py node-v0.9.9/tools/closure_linter/closure_linter/fixjsstyle.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/fixjsstyle.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/fixjsstyle.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/fixjsstyle_test.py node-v0.9.9/tools/closure_linter/closure_linter/fixjsstyle_test.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/fixjsstyle_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/fixjsstyle_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/full_test.py node-v0.9.9/tools/closure_linter/closure_linter/full_test.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/full_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/full_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/gjslint.py node-v0.9.9/tools/closure_linter/closure_linter/gjslint.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/gjslint.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/gjslint.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/indentation.py node-v0.9.9/tools/closure_linter/closure_linter/indentation.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/indentation.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/indentation.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/__init__.py node-v0.9.9/tools/closure_linter/closure_linter/__init__.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/__init__.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/__init__.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1 +1 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/javascriptlintrules.py node-v0.9.9/tools/closure_linter/closure_linter/javascriptlintrules.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/javascriptlintrules.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/javascriptlintrules.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/javascriptstatetracker.py node-v0.9.9/tools/closure_linter/closure_linter/javascriptstatetracker.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/javascriptstatetracker.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/javascriptstatetracker.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/javascriptstatetracker_test.py node-v0.9.9/tools/closure_linter/closure_linter/javascriptstatetracker_test.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/javascriptstatetracker_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/javascriptstatetracker_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/javascripttokenizer.py node-v0.9.9/tools/closure_linter/closure_linter/javascripttokenizer.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/javascripttokenizer.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/javascripttokenizer.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/javascripttokens.py node-v0.9.9/tools/closure_linter/closure_linter/javascripttokens.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/javascripttokens.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/javascripttokens.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/statetracker.py node-v0.9.9/tools/closure_linter/closure_linter/statetracker.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/statetracker.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/statetracker.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/closure_linter/tokenutil.py node-v0.9.9/tools/closure_linter/closure_linter/tokenutil.py
+--- node-v0.9.9-o/tools/closure_linter/closure_linter/tokenutil.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/closure_linter/tokenutil.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/closure_linter/gflags.py node-v0.9.9/tools/closure_linter/gflags.py
+--- node-v0.9.9-o/tools/closure_linter/gflags.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/gflags.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2007, Google Inc.
+ # All rights reserved.
+diff -ur node-v0.9.9-o/tools/closure_linter/setup.py node-v0.9.9/tools/closure_linter/setup.py
+--- node-v0.9.9-o/tools/closure_linter/setup.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/closure_linter/setup.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
+ #
+diff -ur node-v0.9.9-o/tools/genv8constants.py node-v0.9.9/tools/genv8constants.py
+--- node-v0.9.9-o/tools/genv8constants.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/genv8constants.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ #
+ # genv8constants.py output_file libv8_base.a
+diff -ur node-v0.9.9-o/tools/gyp/buildbot/buildbot_run.py node-v0.9.9/tools/gyp/buildbot/buildbot_run.py
+--- node-v0.9.9-o/tools/gyp/buildbot/buildbot_run.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/buildbot/buildbot_run.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+diff -ur node-v0.9.9-o/tools/gyp/gyp node-v0.9.9/tools/gyp/gyp
+--- node-v0.9.9-o/tools/gyp/gyp	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/gyp	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2009 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/gyptest.py node-v0.9.9/tools/gyp/gyptest.py
+--- node-v0.9.9-o/tools/gyp/gyptest.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/gyptest.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/common_test.py node-v0.9.9/tools/gyp/pylib/gyp/common_test.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/common_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/common_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/easy_xml_test.py node-v0.9.9/tools/gyp/pylib/gyp/easy_xml_test.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/easy_xml_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/easy_xml_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2011 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/generator/msvs_test.py node-v0.9.9/tools/gyp/pylib/gyp/generator/msvs_test.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/generator/msvs_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/generator/msvs_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/generator/ninja_test.py node-v0.9.9/tools/gyp/pylib/gyp/generator/ninja_test.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/generator/ninja_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/generator/ninja_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/__init__.py node-v0.9.9/tools/gyp/pylib/gyp/__init__.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/__init__.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/__init__.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/mac_tool.py node-v0.9.9/tools/gyp/pylib/gyp/mac_tool.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/mac_tool.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/mac_tool.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/MSVSSettings_test.py node-v0.9.9/tools/gyp/pylib/gyp/MSVSSettings_test.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/MSVSSettings_test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/MSVSSettings_test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/sun_tool.py node-v0.9.9/tools/gyp/pylib/gyp/sun_tool.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/sun_tool.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/sun_tool.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ # Copyright (c) 2011 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+diff -ur node-v0.9.9-o/tools/gyp/pylib/gyp/win_tool.py node-v0.9.9/tools/gyp/pylib/gyp/win_tool.py
+--- node-v0.9.9-o/tools/gyp/pylib/gyp/win_tool.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/pylib/gyp/win_tool.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/setup.py node-v0.9.9/tools/gyp/setup.py
+--- node-v0.9.9-o/tools/gyp/setup.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/setup.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2009 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/tools/graphviz.py node-v0.9.9/tools/gyp/tools/graphviz.py
+--- node-v0.9.9-o/tools/gyp/tools/graphviz.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/tools/graphviz.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2011 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/tools/pretty_gyp.py node-v0.9.9/tools/gyp/tools/pretty_gyp.py
+--- node-v0.9.9-o/tools/gyp/tools/pretty_gyp.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/tools/pretty_gyp.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/tools/pretty_sln.py node-v0.9.9/tools/gyp/tools/pretty_sln.py
+--- node-v0.9.9-o/tools/gyp/tools/pretty_sln.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/tools/pretty_sln.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp/tools/pretty_vcproj.py node-v0.9.9/tools/gyp/tools/pretty_vcproj.py
+--- node-v0.9.9-o/tools/gyp/tools/pretty_vcproj.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp/tools/pretty_vcproj.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ # Copyright (c) 2012 Google Inc. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+diff -ur node-v0.9.9-o/tools/gyp_node node-v0.9.9/tools/gyp_node
+--- node-v0.9.9-o/tools/gyp_node	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/gyp_node	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ import glob
+ import os
+ import shlex
+diff -ur node-v0.9.9-o/tools/install.py node-v0.9.9/tools/install.py
+--- node-v0.9.9-o/tools/install.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/install.py	2013-02-15 21:19:33.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ import errno
+ 
+@@ -119,8 +119,10 @@
      assert(0) # unhandled action type
  
  def files(action):
 +  global lib_dir
-   action(['deps/uv/include/ares.h',
-           'deps/uv/include/ares_version.h',
-           'deps/uv/include/uv.h',
-@@ -193,6 +195,7 @@
-           'include/node/uv-private/')
    action(['doc/node.1'], 'share/man/man1/')
    action(['out/Release/node'], 'bin/node')
-+  action(['out/Release/lib.target/libnode.so.8.0.0'], lib_dir + '/libnode.so.8.0.0')
++  action(['out/Release/lib.target/libnode.so.9.0.0'], lib_dir + '/libnode.so.9.0.0')
  
    # install unconditionally, checking if the platform supports dtrace doesn't
    # work when cross-compiling and besides, there's at least one linux flavor
-@@ -203,7 +206,7 @@
+@@ -135,7 +137,7 @@
    if 'true' == variables.get('node_install_npm'): npm_files(action)
  
  def run(args):
@@ -102,11 +598,32 @@ diff -ur node-v0.8.15-o/tools/install.py node-v0.8.15/tools/install.py
  
    # chdir to the project's top-level directory
    os.chdir(abspath(os.path.dirname(__file__), '..'))
-@@ -215,6 +218,7 @@
-   # argv[2] is a custom install prefix for packagers (think DESTDIR)
+@@ -148,6 +150,9 @@
    dst_dir = node_prefix = variables.get('node_prefix') or '/usr/local'
    if len(args) > 2: dst_dir = abspath(args[2] + '/' + dst_dir)
-+  if len(args) > 3: lib_dir = args[3]
  
++  lib_dir = 'lib'
++  if len(args) > 3: lib_dir = args[3]
++
    cmd = args[1] if len(args) > 1 else 'install'
    if cmd == 'install': return files(install)
+   if cmd == 'uninstall': return files(uninstall)
+Only in node-v0.9.9/tools: install.py~
+diff -ur node-v0.9.9-o/tools/js2c.py node-v0.9.9/tools/js2c.py
+--- node-v0.9.9-o/tools/js2c.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/js2c.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2006-2008 the V8 project authors. All rights reserved.
+ # Redistribution and use in source and binary forms, with or without
+diff -ur node-v0.9.9-o/tools/test.py node-v0.9.9/tools/test.py
+--- node-v0.9.9-o/tools/test.py	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/tools/test.py	2013-02-15 21:15:55.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright 2008 the V8 project authors. All rights reserved.
+ # Redistribution and use in source and binary forms, with or without

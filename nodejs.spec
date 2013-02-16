@@ -1,12 +1,12 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.8.15
+Version:	0.9.9
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	6cb31180b07475db103e694f65e8bb9b
+# Source0-md5:    d01ff681b006e62604c5e171e9abc0f1
 Patch1:     %{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -19,7 +19,7 @@ BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
-BuildRequires:	v8-devel >= 3.11.10.25
+BuildRequires:	v8-devel >= 3.15.11.10
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -34,7 +34,6 @@ across distributed devices.
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-waf = %{version}-%{release}
 Requires:	gcc
 Requires:	libstdc++-devel
 Requires:	v8-devel
@@ -53,19 +52,6 @@ to build scalable network programs.
 
 This package contains the documentation for nodejs.
 
-%package waf
-Summary:	Evented I/O for V8 JavaScript - customized WAF build system
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description waf
-Node.js is a server-side JavaScript environment that uses an
-asynchronous event-driven model. Node's goal is to provide an easy way
-to build scalable network programs.
-
-This package contains the customized version of the WAF build system
-used by Node.js and many of its modules.
-
 %prep
 %setup -q -n node-v%{version}
 %patch1 -p1
@@ -75,9 +61,6 @@ used by Node.js and many of its modules.
 %patch2 -p1
 %endif
 %patch5 -p1
-
-# fix #!/usr/bin/env python -> #!/usr/bin/python:
-grep -rl 'bin/env python' tools | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
 
 %build
 
@@ -116,15 +99,17 @@ export PYTHONPATH=tools
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/%{_prefix}/lib/node/wafadmin
 %{__make} justinstall \
 	DESTDIR=$RPM_BUILD_ROOT \
     LIBDIR=%{_lib}
 
-ln -s libnode.so.8.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.8
-ln -s libnode.so.8.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
+ln -s libnode.so.9.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.9
+ln -s libnode.so.9.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
 echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
+
+install -d $RPM_BUILD_ROOT%{_includedir}/node
+install src/*.h $RPM_BUILD_ROOT%{_includedir}/node
 
 # for compat of fedora derivered scripts (shebangs)
 ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
@@ -149,11 +134,6 @@ Version: ${version}
 Cflags: -I${includedir}
 EOF
 
-%py_ocomp $RPM_BUILD_ROOT%{_libdir}/node/wafadmin
-%py_comp $RPM_BUILD_ROOT%{_libdir}/node/wafadmin
-# TODO: check it first
-#%%py_postclean %{_libdir}/node/wafadmin
-
 # install documentation
 install -d $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
 cp -a doc/api/* $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
@@ -172,7 +152,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
-%ghost %{_libdir}/libnode.so.8
+%ghost %{_libdir}/libnode.so.9
 %if "%{_lib}" != "lib"
 %dir %{_libdir}/node
 %endif
@@ -190,13 +170,3 @@ rm -rf $RPM_BUILD_ROOT
 %files doc
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-doc-%{version}
-
-%files waf
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/node-waf
-%dir %{_libdir}/node/wafadmin
-%dir %{_libdir}/node/wafadmin/Tools
-%{_libdir}/node/wafadmin/*.py[co]
-%{_libdir}/node/wafadmin/*.py
-%{_libdir}/node/wafadmin/Tools/*.py
-%{_libdir}/node/wafadmin/Tools/*.py[co]
