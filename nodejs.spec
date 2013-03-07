@@ -1,13 +1,13 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.9.9
+Version:	0.9.12
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:    d01ff681b006e62604c5e171e9abc0f1
-Patch1:     %{name}-shared.patch
+# Source0-md5:	0521950111ba1b2165b125b0832ffef8
+Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
@@ -20,6 +20,7 @@ BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	v8-devel >= 3.15.11.10
+Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -76,25 +77,25 @@ export PYTHONPATH=tools
 	--without-npm \
 	--prefix=%{_prefix}
 
-%make -C out \
-    BUILDTYPE=Release \
-    V=1 \
-    CFLAGS.host="%{rpmcflags} -fPIC" \
-    CXXFLAGS.host="%{rpmcppflags} -fPIC" \
-    LDFLAGS.host="%{rpmcflags}" \
-    CFLAGS.target="%{rpmcflags} -fPIC" \
-    CXXFLAGS.target="%{rpmcppflags} -fPIC" \
-    LDFLAGS.target="%{rpmcflags}" \
+%{__make} -C out \
+	BUILDTYPE=Release \
+	V=1 \
+	CFLAGS.host="%{rpmcflags} -fPIC" \
+	CXXFLAGS.host="%{rpmcppflags} -fPIC" \
+	LDFLAGS.host="%{rpmcflags}" \
+	CFLAGS.target="%{rpmcflags} -fPIC" \
+	CXXFLAGS.target="%{rpmcppflags} -fPIC" \
+	LDFLAGS.target="%{rpmcflags}" \
 %if "%{pld_release}" == "ac"
-    CC.host="%{__cc}4" \
-    CXX.host="%{__cxx}4" \
-    CC.target="%{__cc}4" \
-    CXX.target="%{__cxx}4" \
+	CC.host="%{__cc}4" \
+	CXX.host="%{__cxx}4" \
+	CC.target="%{__cc}4" \
+	CXX.target="%{__cxx}4" \
 %else
-    CC.host="%{__cc}" \
-    CXX.host="%{__cxx}" \
-    CC.target="%{__cc}" \
-    CXX.target="%{__cxx}"
+	CC.host="%{__cc}" \
+	CXX.host="%{__cxx}" \
+	CC.target="%{__cc}" \
+	CXX.target="%{__cxx}"
 %endif
 
 %install
