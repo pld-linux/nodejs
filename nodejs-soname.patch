@@ -4,7 +4,7 @@
    node.add_objects = 'eio http_parser'
    if product_type_is_lib:
      node.install_path = '${LIBDIR}'
-+    node.vnum = "6.0.0" # Fixme, derive from version
++    node.vnum = "10.0.0" # Fixme, derive from version
    else:
      node.install_path = '${PREFIX}/bin'
    node.chmod = 0755

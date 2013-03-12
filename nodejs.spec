@@ -1,13 +1,13 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.9.12
+Version:	0.10.0
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	0521950111ba1b2165b125b0832ffef8
-Patch1:		%{name}-shared.patch
+# Source0-md5:	23df2c1aeb9dcf17284047f2530b0525
+Patch1:     %{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
@@ -104,8 +104,8 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
     LIBDIR=%{_lib}
 
-ln -s libnode.so.9.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.9
-ln -s libnode.so.9.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
+ln -s libnode.so.10.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
+ln -s libnode.so.10.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
 echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
@@ -153,7 +153,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
-%ghost %{_libdir}/libnode.so.9
+%ghost %{_libdir}/libnode.so.10
 %if "%{_lib}" != "lib"
 %dir %{_libdir}/node
 %endif
