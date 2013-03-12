@@ -1,11 +1,13 @@
---- ../node-v0.4.11.original/lib/module.js	2011-08-17 18:18:10.000000000 -0700
-+++ ./lib/module.js	2011-08-22 14:36:11.662283878 -0700
-@@ -422,7 +422,7 @@
- };
+diff -ur node-v0.9.9-0/lib/module.js node-v0.9.9/lib/module.js
+--- node-v0.9.9-0/lib/module.js	2013-02-07 10:11:11.000000000 -0700
++++ node-v0.9.9/lib/module.js	2013-02-15 21:40:33.000000000 -0700
+@@ -506,7 +506,7 @@
+     var homeDir = process.env.HOME;
+   }
  
- Module._initPaths = function() {
 -  var paths = [path.resolve(process.execPath, '..', '..', 'lib', 'node')];
 +  var paths = ["/usr/lib/node", "/usr/lib/node_modules"];
  
-   if (process.env['HOME']) {
-     paths.unshift(path.resolve(process.env['HOME'], '.node_libraries'));
+   if (homeDir) {
+     paths.unshift(path.resolve(homeDir, '.node_libraries'));
+Only in node-v0.9.9/lib: module.js~
