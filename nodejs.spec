@@ -85,17 +85,10 @@ export PYTHONPATH=tools
 	CFLAGS.target="%{rpmcflags} -fPIC" \
 	CXXFLAGS.target="%{rpmcppflags} -fPIC" \
 	LDFLAGS.target="%{rpmcflags}" \
-%if "%{pld_release}" == "ac"
-	CC.host="%{__cc}4" \
-	CXX.host="%{__cxx}4" \
-	CC.target="%{__cc}4" \
-	CXX.target="%{__cxx}4" \
-%else
 	CC.host="%{__cc}" \
 	CXX.host="%{__cxx}" \
 	CC.target="%{__cc}" \
 	CXX.target="%{__cxx}"
-%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
