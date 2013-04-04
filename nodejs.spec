@@ -4,15 +4,15 @@ Version:	0.10.3
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
-URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
 # Source0-md5:	4daca92618515708a4631e98a8e8c779
-Patch1:     %{name}-shared.patch
+Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
 Patch5:		uv-fpic.patch
+URL:		http://www.nodejs.org/
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	python >= 1:2.5.2
@@ -64,7 +64,6 @@ This package contains the documentation for nodejs.
 %patch5 -p1
 
 %build
-
 # Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
 CC=${CC#ccache }
 
@@ -102,15 +101,19 @@ export PYTHONPATH=tools
 rm -rf $RPM_BUILD_ROOT
 %{__make} justinstall \
 	DESTDIR=$RPM_BUILD_ROOT \
-    LIBDIR=%{_lib}
+	LIBDIR=%{_lib}
 
-ln -s libnode.so.10.3.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
-ln -s libnode.so.10.3.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
+# no dtrace on linux
+%{__rm} -r $RPM_BUILD_ROOT%{_prefix}/lib/dtrace/node.d
+
+lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*)
+ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
+ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
 echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
 install -d $RPM_BUILD_ROOT%{_includedir}/node
-install src/*.h $RPM_BUILD_ROOT%{_includedir}/node
+cp -p src/*.h $RPM_BUILD_ROOT%{_includedir}/node
 
 # for compat of fedora derivered scripts (shebangs)
 ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
@@ -144,7 +147,7 @@ rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.json
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
+%post	-p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
