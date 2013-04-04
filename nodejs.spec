@@ -1,12 +1,12 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.0
+Version:	0.10.3
 Release:	1
 License:	BSD and MIT and ASL 2.0 and GPLv3
 Group:		Development/Languages
 URL:		http://www.nodejs.org/
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	23df2c1aeb9dcf17284047f2530b0525
+# Source0-md5:	4daca92618515708a4631e98a8e8c779
 Patch1:     %{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -104,8 +104,8 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
     LIBDIR=%{_lib}
 
-ln -s libnode.so.10.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
-ln -s libnode.so.10.0.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
+ln -s libnode.so.10.3.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
+ln -s libnode.so.10.3.0 $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
 echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
