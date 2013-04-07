@@ -16,6 +16,7 @@ URL:		http://www.nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libstdc++-devel
+BuildRequires:	libuv-devel >= %{version}
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
@@ -72,13 +73,18 @@ This package contains the documentation for nodejs.
 # Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
 CC=${CC#ccache }
 
-# NOT autoconf so dont use macro
+# add defines from libuv (RHBZ#892601)
+export CFLAGS="%{rpmcflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
+export CXXFLAGS="%{rpmcppflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
+
+# NOT autoconf so don't use macro
 export PYTHONPATH=tools
 ./configure \
 	--shared-v8 \
 	--shared-zlib \
 	--shared-openssl \
 	--shared-cares \
+	--shared-libuv \
 	--without-npm \
 	--without-dtrace \
 	--prefix=%{_prefix}
