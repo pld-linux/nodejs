@@ -1,8 +1,8 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.3
-Release:	1
-License:	BSD and MIT and ASL 2.0 and GPLv3
+Release:	2
+License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
 # Source0-md5:	4daca92618515708a4631e98a8e8c779
@@ -108,6 +108,13 @@ echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
 install -d $RPM_BUILD_ROOT%{_includedir}/node
 cp -p src/*.h $RPM_BUILD_ROOT%{_includedir}/node
+cp -p deps/uv/include/uv.h $RPM_BUILD_ROOT%{_includedir}/node
+cp -a deps/uv/include/uv-private $RPM_BUILD_ROOT%{_includedir}/node
+
+# install for node-gyp
+install -d $RPM_BUILD_ROOT%{_usrsrc}/%{name}
+cp -p common.gypi $RPM_BUILD_ROOT%{_usrsrc}/%{name}
+ln -s %{_includedir}/node $RPM_BUILD_ROOT%{_usrsrc}/%{name}/src
 
 # for compat of fedora derivered scripts (shebangs)
 ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
@@ -164,6 +171,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnode.so
 %{_includedir}/node
 %{_pkgconfigdir}/nodejs.pc
+%{_usrsrc}/%{name}
 
 %files doc
 %defattr(644,root,root,755)
