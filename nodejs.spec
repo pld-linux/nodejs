@@ -16,11 +16,14 @@ URL:		http://www.nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libstdc++-devel
+BuildRequires:	openssl-devel
+BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	v8-devel >= 3.15.11.10
+BuildRequires:	zlib-devel
 BuildConflicts:	eio
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
