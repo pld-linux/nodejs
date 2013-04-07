@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.3
-Release:	2
+Release:	3
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -13,6 +13,7 @@ Patch2:		%{name}-libpath.patch
 Patch3:		%{name}-lib64path.patch
 Patch5:		uv-fpic.patch
 URL:		http://www.nodejs.org/
+BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	python >= 1:2.5.2
@@ -20,7 +21,7 @@ BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	v8-devel >= 3.15.11.10
-BuildConflicts: eio
+BuildConflicts:	eio
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -74,7 +75,9 @@ export PYTHONPATH=tools
 	--shared-v8 \
 	--shared-zlib \
 	--shared-openssl \
+	--shared-cares \
 	--without-npm \
+	--without-dtrace \
 	--prefix=%{_prefix}
 
 %{__make} -C out \
