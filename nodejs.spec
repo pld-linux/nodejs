@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.3
-Release:	3
+Release:	4
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -42,9 +42,14 @@ across distributed devices.
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	c-ares-devel
 Requires:	gcc
+Requires:	http-parser-devel
 Requires:	libstdc++-devel
+Requires:	libuv-devel
+Requires:	openssl-devel
 Requires:	v8-devel
+Requires:	zlib-devel
 
 %description devel
 Development headers for nodejs.
@@ -122,8 +127,6 @@ echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
 install -d $RPM_BUILD_ROOT%{_includedir}/node
 cp -p src/*.h $RPM_BUILD_ROOT%{_includedir}/node
-cp -p deps/uv/include/uv.h $RPM_BUILD_ROOT%{_includedir}/node
-cp -a deps/uv/include/uv-private $RPM_BUILD_ROOT%{_includedir}/node
 
 # install for node-gyp
 install -d $RPM_BUILD_ROOT%{_usrsrc}/%{name}
