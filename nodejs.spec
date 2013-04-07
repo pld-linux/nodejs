@@ -15,6 +15,7 @@ Patch5:		uv-fpic.patch
 URL:		http://www.nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
+BuildRequires:	http-parser-devel >= 2.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	libuv-devel >= %{version}
 BuildRequires:	openssl-devel
@@ -85,6 +86,7 @@ export PYTHONPATH=tools
 	--shared-openssl \
 	--shared-cares \
 	--shared-libuv \
+	--shared-http-parser \
 	--without-npm \
 	--without-dtrace \
 	--prefix=%{_prefix}
