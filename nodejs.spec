@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.3
-Release:	4
+Release:	5
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -81,12 +81,9 @@ This package contains the documentation for nodejs.
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 %build
-# add defines from libuv (RHBZ#892601)
-export CFLAGS="%{rpmcflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
-export CXXFLAGS="%{rpmcppflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
-
-# NOT autoconf so don't use macro
-PYTHONPATH=tools \
+# CC used only to detect if CC is clang, not used for compiling
+CC="%{__cc}" \
+CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
 	--shared-v8 \
@@ -99,19 +96,11 @@ GYP_DEFINES="soname_version=%{sover}" \
 	--without-dtrace \
 	--prefix=%{_prefix}
 
-%{__make} -C out \
-	BUILDTYPE=Release \
-	V=1 \
-	CFLAGS.host="%{rpmcflags} -fPIC" \
-	CXXFLAGS.host="%{rpmcppflags} -fPIC" \
-	LDFLAGS.host="%{rpmcflags}" \
-	CFLAGS.target="%{rpmcflags} -fPIC" \
-	CXXFLAGS.target="%{rpmcppflags} -fPIC" \
-	LDFLAGS.target="%{rpmcflags}" \
-	CC.host="%{__cc}" \
-	CXX.host="%{__cxx}" \
-	CC.target="%{__cc}" \
-	CXX.target="%{__cxx}"
+# add LFS defines from libuv (RHBZ#892601)
+# CXXFLAGS must be exported, as it is needed for make, not gyp
+CXXFLAGS="%{rpmcxxflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC" \
+LDFLAGS="%{rpmldflags}" \
+%{__make} -C out V=1 BUILDTYPE=Release
 
 %install
 rm -rf $RPM_BUILD_ROOT
