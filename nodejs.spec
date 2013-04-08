@@ -122,7 +122,7 @@ rm -rf $RPM_BUILD_ROOT
 # no dtrace on linux
 %{__rm} -r $RPM_BUILD_ROOT%{_prefix}/lib/dtrace/node.d
 
-lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*)
+lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so
 

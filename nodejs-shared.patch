@@ -53,8 +53,8 @@
 +    {
 +      'target_name': 'libnode',
 +      'type': 'shared_library',
-+      'product_extension': 'so.10.3.0',
-+      'soname_version': '10.3.0',
++      'product_extension': 'so.10',
++      'soname_version': '10',
 +      'cflags': ['-fPIC'],
 +
 +      'sources': [
@@ -95,7 +95,7 @@
  def files(action):
 +  global lib_dir
    action(['out/Release/node'], 'bin/node')
-+  action(['out/Release/lib.target/libnode.so.10.3.0'], lib_dir + '/libnode.so.10.3.0')
++  action(['out/Release/lib.target/libnode.so.10'], lib_dir + '/libnode.so.10.3.0')
  
    # install unconditionally, checking if the platform supports dtrace doesn't
    # work when cross-compiling and besides, there's at least one linux flavor
