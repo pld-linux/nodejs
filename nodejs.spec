@@ -79,15 +79,12 @@ This package contains the documentation for nodejs.
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 %build
-# Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
-CC=${CC#ccache }
-
 # add defines from libuv (RHBZ#892601)
 export CFLAGS="%{rpmcflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 export CXXFLAGS="%{rpmcppflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 
 # NOT autoconf so don't use macro
-export PYTHONPATH=tools
+PYTHONPATH=tools \
 ./configure \
 	--shared-v8 \
 	--shared-zlib \
