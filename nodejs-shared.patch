@@ -17,6 +17,17 @@
  
  clean:
  	-rm -rf out/Makefile node node_g out/$(BUILDTYPE)/node blog.html email.md
+--- node-v0.10.3/common.gypi~	2013-04-03 20:30:57.000000000 +0300
++++ node-v0.10.3/common.gypi	2013-04-08 15:50:00.327121152 +0300
+@@ -8,6 +8,8 @@
+     'component%': 'static_library',  # NB. these names match with what V8 expects
+     'msvs_multi_core_compile': '0',  # we do enable multicore compiles, but not using the V8 way
+     'gcc_version%': 'unknown',
++    # For a shared library build, results in "libnode.so.<(soname_version)".
++    'soname_version%': '',
+     'clang%': 0,
+     'python%': 'python',
+ 
 --- node-v0.10.3-o/node.gyp	2013-04-03 11:30:57.000000000 -0600
 +++ node-v0.10.3/node.gyp	2013-04-03 19:30:22.000000000 -0600
 @@ -67,17 +67,35 @@
@@ -53,8 +64,8 @@
 +    {
 +      'target_name': 'libnode',
 +      'type': 'shared_library',
-+      'product_extension': 'so.10',
-+      'soname_version': '10',
++      'product_extension': 'so.<(soname_version)',
++      'soname_version': '<(soname_version)',
 +      'cflags': ['-fPIC'],
 +
 +      'sources': [

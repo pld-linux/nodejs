@@ -32,6 +32,8 @@ Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		sover	%(echo %{version} | cut -d. -f2)
+
 %description
 Node.js is a platform built on Chrome's JavaScript runtime for easily
 building fast, scalable network applications. Node.js uses an
@@ -85,6 +87,7 @@ export CXXFLAGS="%{rpmcppflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 
 # NOT autoconf so don't use macro
 PYTHONPATH=tools \
+GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
 	--shared-v8 \
 	--shared-zlib \
