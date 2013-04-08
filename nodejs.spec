@@ -24,6 +24,7 @@ BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	sed >= 4.0
 BuildRequires:	v8-devel >= 3.15.11.10
 BuildRequires:	zlib-devel
 BuildConflicts:	eio
@@ -74,6 +75,8 @@ This package contains the documentation for nodejs.
 %patch2 -p1
 %endif
 %patch5 -p1
+
+grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 %build
 # Error: V8 doesn't like ccache. Please set your CC env var to 'gcc'
