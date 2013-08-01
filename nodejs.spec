@@ -80,6 +80,8 @@ This package contains the documentation for nodejs.
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
+rm -r deps
+
 %build
 # CC used only to detect if CC is clang, not used for compiling
 CC="%{__cc}" \
