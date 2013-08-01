@@ -1,11 +1,11 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.5
+Version:	0.10.15
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	f6b1c363f75185d57c8486cd63c42e14
+# Source0-md5:	59f295b0a30dc8dbdb46407c2d9b2923
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -17,7 +17,7 @@ BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	http-parser-devel >= 2.0
 BuildRequires:	libstdc++-devel
-BuildRequires:	libuv-devel >= %{version}
+BuildRequires:	libuv-devel >= 0.10
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
