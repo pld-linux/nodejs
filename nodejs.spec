@@ -1,11 +1,11 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.21
+Version:	0.10.26
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	774bc17875c042ac42ad2d96b9c96734
+# Source0-md5:	15e9018dadc63a2046f61eb13dfd7bd6
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -27,7 +27,7 @@ BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
 BuildRequires:	v8-devel >= 3.15.11.10
 BuildRequires:	zlib-devel
-BuildConflicts:	eio
+#BuildConflicts:	eio
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
