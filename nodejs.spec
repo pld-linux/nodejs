@@ -27,7 +27,6 @@ BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
 BuildRequires:	v8-devel >= 3.15.11.10
 BuildRequires:	zlib-devel
-#BuildConflicts:	eio
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
