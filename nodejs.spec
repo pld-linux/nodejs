@@ -1,17 +1,23 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.26
+Version:	0.10.30
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	15e9018dadc63a2046f61eb13dfd7bd6
+# Source0-md5:	bae597a31bf6d23da1c4217bfed611dc
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
 Patch5:		uv-fpic.patch
+# The invalid UTF8 fix has been reverted since this breaks v8 API, which cannot
+# be done in a stable distribution release.  This build of nodejs will behave as
+# if NODE_INVALID_UTF8 was set.  For more information on the implications, see:
+# http://blog.nodejs.org/2014/06/16/openssl-and-breaking-utf-8-change/
+Patch6:		%{name}-revert-utf8-v8.patch
+Patch7:		%{name}-revert-utf8-node.patch
 URL:		http://www.nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
@@ -76,6 +82,8 @@ This package contains the documentation for nodejs.
 %patch2 -p1
 %endif
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
@@ -108,9 +116,6 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} justinstall \
 	DESTDIR=$RPM_BUILD_ROOT \
 	LIBDIR=%{_lib}
-
-# no dtrace on linux
-%{__rm} -r $RPM_BUILD_ROOT%{_prefix}/lib/dtrace/node.d
 
 lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
