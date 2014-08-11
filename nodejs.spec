@@ -11,6 +11,7 @@ Patch1:		%{name}-shared.patch
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
+Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
 # The invalid UTF8 fix has been reverted since this breaks v8 API, which cannot
 # be done in a stable distribution release.  This build of nodejs will behave as
@@ -33,6 +34,7 @@ BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
 BuildRequires:	v8-devel >= 3.15.11.10
 BuildRequires:	zlib-devel
+Requires:	ca-certificates
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -81,6 +83,7 @@ This package contains the documentation for nodejs.
 %else
 %patch2 -p1
 %endif
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
