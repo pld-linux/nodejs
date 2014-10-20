@@ -1,7 +1,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.30
-Release:	1
+Release:	2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
