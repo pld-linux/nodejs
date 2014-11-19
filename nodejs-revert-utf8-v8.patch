@@ -15,17 +15,18 @@ diff --git a/src/node.cc b/src/node.cc
 index 4223973..e9696cd 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -178,8 +178,6 @@ static uv_async_t dispatch_debug_messages_async;
+@@ -180,9 +180,6 @@ static uv_async_t dispatch_debug_messages_async;
  // Declared in node_internals.h
  Isolate* node_isolate = NULL;
  
 -int WRITE_UTF8_FLAGS = v8::String::HINT_MANY_WRITES_EXPECTED |
 -                       v8::String::NO_NULL_TERMINATION;
- 
+-
  static void Spin(uv_idle_t* handle, int status) {
    assert((uv_idle_t*) handle == &tick_spinner);
-@@ -3046,11 +3044,6 @@ static char **copy_argv(int argc, char **argv) {
- }
+   assert(status == 0);
+@@ -3077,11 +3074,6 @@ static char **copy_argv(int argc, char **argv) {
+ 
  
  int Start(int argc, char *argv[]) {
 -  const char* replaceInvalid = getenv("NODE_INVALID_UTF8");

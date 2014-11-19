@@ -22,15 +22,6 @@ diff --git a/src/cares_wrap.cc b/src/cares_wrap.cc
 index 321e144..b7ba828 100644
 --- a/src/cares_wrap.cc
 +++ b/src/cares_wrap.cc
-@@ -31,8 +31,6 @@
- #include "tree.h"
- #include "uv.h"
- 
--#include "util.h"
--
- #if defined(__OpenBSD__) || defined(__MINGW32__) || defined(_MSC_VER)
- # include <nameser.h>
- #else
 @@ -741,7 +739,7 @@ static Handle<Value> Query(const Arguments& args) {
    // object reference, causing wrap->GetObject() to return undefined.
    Local<Object> object = Local<Object>::New(wrap->GetObject());
@@ -83,15 +74,6 @@ diff --git a/src/node.cc b/src/node.cc
 index e9696cd..8257604 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -82,8 +82,6 @@ typedef int mode_t;
- #include "node_script.h"
- #include "v8_typed_array.h"
- 
--#include "util.h"
--
- using namespace v8;
- 
- # ifdef __APPLE__
 @@ -1102,7 +1100,7 @@ enum encoding ParseEncoding(Handle<Value> encoding_v, enum encoding _default) {
  
    if (!encoding_v->IsString()) return _default;
@@ -262,14 +244,6 @@ diff --git a/src/node_crypto.cc b/src/node_crypto.cc
 index 46faba2..0ae1f8a 100644
 --- a/src/node_crypto.cc
 +++ b/src/node_crypto.cc
-@@ -26,7 +26,6 @@
- #include "node.h"
- #include "node_buffer.h"
- #include "string_bytes.h"
--#include "util.h"
- 
- #include <string.h>
- #ifdef _MSC_VER
 @@ -242,7 +241,7 @@ Handle<Value> SecureContext::Init(const Arguments& args) {
    OPENSSL_CONST SSL_METHOD *method = SSLv23_method();
  
@@ -409,15 +383,6 @@ diff --git a/src/node_dtrace.cc b/src/node_dtrace.cc
 index 0b2d0f4..4b851e3 100644
 --- a/src/node_dtrace.cc
 +++ b/src/node_dtrace.cc
-@@ -20,8 +20,6 @@
- // USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
- 
--#include "util.h"
--
- #ifdef HAVE_DTRACE
- #include "node_dtrace.h"
- #include <string.h>
 @@ -68,7 +66,7 @@ using namespace v8;
      return (ThrowException(Exception::Error(String::New("expected " \
        "object for " #obj " to contain string member " #member)))); \
@@ -440,14 +405,6 @@ diff --git a/src/node_file.cc b/src/node_file.cc
 index 3c35e0b..f665b19 100644
 --- a/src/node_file.cc
 +++ b/src/node_file.cc
-@@ -24,7 +24,6 @@
- #include "node_buffer.h"
- #include "node_stat_watcher.h"
- #include "req_wrap.h"
--#include "util.h"
- 
- #include <fcntl.h>
- #include <sys/types.h>
 @@ -404,7 +403,7 @@ static Handle<Value> Stat(const Arguments& args) {
    if (args.Length() < 1) return TYPE_ERROR("path required");
    if (!args[0]->IsString()) return TYPE_ERROR("path must be a string");
@@ -589,14 +546,6 @@ diff --git a/src/node_stat_watcher.cc b/src/node_stat_watcher.cc
 index fd3e5d1..c3f668c 100644
 --- a/src/node_stat_watcher.cc
 +++ b/src/node_stat_watcher.cc
-@@ -20,7 +20,6 @@
- // USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
- #include "node_stat_watcher.h"
--#include "util.h"
- 
- #include <assert.h>
- #include <string.h>
 @@ -105,7 +104,7 @@ Handle<Value> StatWatcher::Start(const Arguments& args) {
    HandleScope scope;
  
@@ -610,14 +559,6 @@ diff --git a/src/process_wrap.cc b/src/process_wrap.cc
 index ac63e4b..784300f 100644
 --- a/src/process_wrap.cc
 +++ b/src/process_wrap.cc
-@@ -25,7 +25,6 @@
- #include "tty_wrap.h"
- #include "tcp_wrap.h"
- #include "udp_wrap.h"
--#include "util.h"
- 
- #include <string.h>
- #include <stdlib.h>
 @@ -188,7 +187,7 @@ class ProcessWrap : public HandleWrap {
  
      // options.file
@@ -658,14 +599,6 @@ diff --git a/src/udp_wrap.cc b/src/udp_wrap.cc
 index 31a4e78..b33f4e8 100644
 --- a/src/udp_wrap.cc
 +++ b/src/udp_wrap.cc
-@@ -25,7 +25,6 @@
- #include "req_wrap.h"
- #include "handle_wrap.h"
- #include "udp_wrap.h"
--#include "util.h"
- 
- #include <stdlib.h>
- 
 @@ -161,7 +160,7 @@ Handle<Value> UDPWrap::DoBind(const Arguments& args, int family) {
    // bind(ip, port, flags)
    assert(args.Length() == 3);
@@ -696,40 +629,12 @@ index 31a4e78..b33f4e8 100644
    switch (family) {
    case AF_INET:
 diff --git a/src/util.h b/src/util.h
-deleted file mode 100644
-index 0dbf7f4..0000000
 --- a/src/util.h
-+++ /dev/null
-@@ -1,78 +0,0 @@
--// Copyright Joyent, Inc. and other Node contributors.
--//
--// Permission is hereby granted, free of charge, to any person obtaining a
--// copy of this software and associated documentation files (the
--// "Software"), to deal in the Software without restriction, including
--// without limitation the rights to use, copy, modify, merge, publish,
--// distribute, sublicense, and/or sell copies of the Software, and to permit
--// persons to whom the Software is furnished to do so, subject to the
--// following conditions:
--//
--// The above copyright notice and this permission notice shall be included
--// in all copies or substantial portions of the Software.
--//
--// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
--// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
--// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
--// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
--// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
--// USE OR OTHER DEALINGS IN THE SOFTWARE.
--
--#ifndef SRC_UTIL_H_
--#define SRC_UTIL_H_
--
--#include "v8.h"
--#include "string_bytes.h"
--
--namespace node {
--
++++ b/src/util.h
+@@ -41,52 +41,6 @@
+   obj->Set(domain_symbol, domain);
+ }
+ 
 -class Utf8Value {
 -  public:
 -    explicit Utf8Value(v8::Handle<v8::Value> value)
@@ -776,9 +681,9 @@ index 0dbf7f4..0000000
 -    char* str_;
 -};
 -
--}  // namespace node
--
--#endif  // SRC_UTIL_H_
+ }  // namespace node
+ 
+ #endif  // SRC_UTIL_H_
 -- 
 1.9.3
 
