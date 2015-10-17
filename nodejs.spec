@@ -31,7 +31,7 @@ Patch7:		%{name}-revert-utf8-node.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
-BuildRequires:	http-parser-devel >= 2.0
+BuildRequires:	http-parser-devel >= 2.5.0
 BuildRequires:	libstdc++-devel
 %{?with_system_uv:BuildRequires:	libuv-devel >= 0.10}
 BuildRequires:	openssl-devel
