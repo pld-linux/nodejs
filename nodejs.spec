@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_without	system_v8	# system v8
+%bcond_without	shared	# build libnode.so shared library
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
@@ -87,7 +88,7 @@ This package contains the documentation for nodejs.
 
 %prep
 %setup -q -n node-v%{version}
-%patch1 -p1
+%{?with_shared:%patch1 -p1}
 %if %{_lib} == "lib64"
 %patch3 -p1
 %else
@@ -134,9 +135,11 @@ LDFLAGS="%{rpmldflags}" \
 rm -rf $RPM_BUILD_ROOT
 %{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_lib}"
 
+%if %{with shared}
 lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so
+%endif
 
 echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
@@ -180,16 +183,20 @@ rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.json
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if %{with shared}
 %post	-p /sbin/ldconfig
 %postun -p /sbin/ldconfig
+%endif
 
 %files
 %defattr(644,root,root,755)
 %doc README.md AUTHORS ChangeLog LICENSE
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
+%if %{with shared}
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
 %ghost %{_libdir}/libnode.so.10
+%endif
 %if "%{_lib}" != "lib"
 %dir %{_libdir}/node
 %endif
@@ -200,7 +207,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
+%if %{with shared}
 %{_libdir}/libnode.so
+%endif
 %{_includedir}/node
 %{_pkgconfigdir}/nodejs.pc
 %{_usrsrc}/%{name}
