@@ -7,6 +7,8 @@
 # NOTES:
 # - https://nodejs.org/en/download/releases/
 
+# see "Modules" column in https://nodejs.org/en/download/releases/
+%define		node_module_version	11
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.40
@@ -44,6 +46,7 @@ BuildRequires:	sed >= 4.0
 %{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.18-2}
 BuildRequires:	zlib-devel
 Requires:	ca-certificates
+Provides:	nodejs(module-version) = %{node_module_version}
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -111,6 +114,12 @@ rm -r deps/openssl
 rm -r deps/zlib
 
 %build
+ver=$(awk '/#define NODE_MODULE_VERSION/{print $NF}' src/node.h)
+if [ $ver != %{node_module_version} ]; then
+	echo "Set %%define node_module_version to $ver and re-run."
+	exit 1
+fi
+
 # CC used only to detect if CC is clang, not used for compiling
 CC="%{__cc}" \
 CXX="%{__cxx}" \
