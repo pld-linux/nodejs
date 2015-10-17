@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_without	system_v8	# system v8
+%bcond_without	system_uv	# system uv
 %bcond_without	shared	# build libnode.so shared library
 
 # NOTES:
@@ -32,7 +33,7 @@ BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	http-parser-devel >= 2.0
 BuildRequires:	libstdc++-devel
-BuildRequires:	libuv-devel >= 0.10
+%{?with_system_uv:BuildRequires:	libuv-devel >= 0.10}
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
@@ -64,7 +65,7 @@ Requires:	c-ares-devel
 Requires:	gcc
 Requires:	http-parser-devel
 Requires:	libstdc++-devel
-Requires:	libuv-devel
+%{?with_system_uv:Requires:	libuv-devel}
 Requires:	openssl-devel
 %{?with_system_v8:Requires:	v8-devel}
 Requires:	zlib-devel
@@ -105,7 +106,7 @@ rm -r deps/npm
 rm -r deps/cares
 rm -r deps/http_parser
 rm -r deps/openssl
-rm -r deps/uv
+%{?with_system_uv:rm -r deps/uv}
 %{?with_system_v8:rm -r deps/v8}
 rm -r deps/zlib
 
@@ -119,7 +120,7 @@ GYP_DEFINES="soname_version=%{sover}" \
 	--shared-zlib \
 	--shared-openssl \
 	--shared-cares \
-	--shared-libuv \
+	%{?with_system_uv:--shared-libuv} \
 	--shared-http-parser \
 	--without-npm \
 	--without-dtrace \
