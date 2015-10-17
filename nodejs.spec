@@ -1,20 +1,20 @@
 #
 # Conditional build:
-%bcond_without	system_v8	# system v8
-%bcond_without	system_uv	# system uv
-%bcond_without	shared	# build libnode.so shared library
+%bcond_with	system_v8	# system v8
+%bcond_with	system_uv	# system uv
+%bcond_with	shared	# build libnode.so shared library
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.40
-Release:	1
+Version:	4.2.1
+Release:	0.1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	f6ef20f327ecd6cb1586c41c7184290c
+# Source0-md5:	41d2b9fb5220af3fd98dd70fb33a2a10
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -90,20 +90,21 @@ This package contains the documentation for nodejs.
 %prep
 %setup -q -n node-v%{version}
 %{?with_shared:%patch1 -p1}
+#%patch1 -p1
 %if %{_lib} == "lib64"
 %patch3 -p1
 %else
 %patch2 -p1
 %endif
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
+#%{?with_system_uv:%patch5 -p1}
+#%patch6 -p1
+#%patch7 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 rm -r deps/npm
-rm -r deps/cares
+#rm -r deps/cares
 rm -r deps/http_parser
 rm -r deps/openssl
 %{?with_system_uv:rm -r deps/uv}
@@ -119,7 +120,7 @@ GYP_DEFINES="soname_version=%{sover}" \
 	%{?with_system_v8:--shared-v8} \
 	--shared-zlib \
 	--shared-openssl \
-	--shared-cares \
+	%{?0:--shared-cares} \
 	%{?with_system_uv:--shared-libuv} \
 	--shared-http-parser \
 	--without-npm \
