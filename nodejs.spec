@@ -1,11 +1,14 @@
+# NOTES:
+# - https://nodejs.org/en/download/releases/
+
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.33
-Release:	1
+Version:	0.10.40
+Release:	0.1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
-Source0:	http://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	626ca8a4f8fec4df49c78ed53d46f1f7
+Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
+# Source0-md5:	f6ef20f327ecd6cb1586c41c7184290c
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -19,7 +22,7 @@ Patch5:		uv-fpic.patch
 # http://blog.nodejs.org/2014/06/16/openssl-and-breaking-utf-8-change/
 Patch6:		%{name}-revert-utf8-v8.patch
 Patch7:		%{name}-revert-utf8-node.patch
-URL:		http://www.nodejs.org/
+URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	http-parser-devel >= 2.0
