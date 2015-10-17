@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_without	system_v8	# system v8
+
 # NOTES:
 # - https://nodejs.org/en/download/releases/
 
@@ -35,7 +39,7 @@ BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
-BuildRequires:	v8-devel >= 3.15.11.10
+%{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.10}
 BuildRequires:	zlib-devel
 Requires:	ca-certificates
 Obsoletes:	nodejs-waf
@@ -61,7 +65,7 @@ Requires:	http-parser-devel
 Requires:	libstdc++-devel
 Requires:	libuv-devel
 Requires:	openssl-devel
-Requires:	v8-devel
+%{?with_system_v8:Requires:	v8-devel}
 Requires:	zlib-devel
 
 %description devel
@@ -93,7 +97,13 @@ This package contains the documentation for nodejs.
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
-rm -r deps
+rm -r deps/npm
+rm -r deps/cares
+rm -r deps/http_parser
+rm -r deps/openssl
+rm -r deps/uv
+%{?with_system_v8:rm -r deps/v8}
+rm -r deps/zlib
 
 %build
 # CC used only to detect if CC is clang, not used for compiling
@@ -101,7 +111,7 @@ CC="%{__cc}" \
 CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
-	--shared-v8 \
+	%{?with_system_v8:--shared-v8} \
 	--shared-zlib \
 	--shared-openssl \
 	--shared-cares \
