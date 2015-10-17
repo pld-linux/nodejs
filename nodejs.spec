@@ -9,7 +9,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	0.10.40
-Release:	0.1
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -40,7 +40,7 @@ BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
-%{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.10}
+%{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.18-2}
 BuildRequires:	zlib-devel
 Requires:	ca-certificates
 Obsoletes:	nodejs-waf
