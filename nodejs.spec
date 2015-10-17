@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	system_v8	# system v8
-%bcond_with	system_uv	# system uv
+%bcond_without	system_uv	# system uv
 %bcond_with	shared	# build libnode.so shared library
 
 # NOTES:
@@ -10,7 +10,7 @@
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 Version:	4.2.1
-Release:	0.1
+Release:	0.2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -33,7 +33,7 @@ BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	http-parser-devel >= 2.5.0
 BuildRequires:	libstdc++-devel
-%{?with_system_uv:BuildRequires:	libuv-devel >= 0.10}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
