@@ -135,7 +135,7 @@ LDFLAGS="%{rpmldflags}" \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_lib}"
+%{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
 
 %if %{with shared}
 lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
@@ -192,7 +192,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md AUTHORS ChangeLog LICENSE
+%doc README.md AUTHORS CHANGELOG.md ROADMAP.md LICENSE
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %if %{with shared}
