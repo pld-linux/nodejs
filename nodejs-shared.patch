@@ -1,22 +1,3 @@
---- node-v0.10.3-o/Makefile	2013-04-03 11:30:57.000000000 -0600
-+++ node-v0.10.3/Makefile	2013-04-03 19:30:22.000000000 -0600
-@@ -54,11 +54,13 @@
- config.gypi: configure
- 	$(PYTHON) ./configure
- 
--install: all
--	$(PYTHON) tools/install.py $@ $(DESTDIR)
-+install: all justinstall
-+
-+justinstall:
-+	$(PYTHON) tools/install.py install $(DESTDIR) $(LIBDIR)
- 
- uninstall:
--	$(PYTHON) tools/install.py $@ $(DESTDIR)
-+	$(PYTHON) tools/install.py $@ $(DESTDIR) $(LIBDIR)
- 
- clean:
- 	-rm -rf out/Makefile node node_g out/$(BUILDTYPE)/node blog.html email.md
 --- node-v0.10.3/common.gypi~	2013-04-03 20:30:57.000000000 +0300
 +++ node-v0.10.3/common.gypi	2013-04-08 15:50:00.327121152 +0300
 @@ -8,6 +8,8 @@

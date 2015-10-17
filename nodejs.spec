@@ -132,9 +132,7 @@ LDFLAGS="%{rpmldflags}" \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} justinstall \
-	DESTDIR=$RPM_BUILD_ROOT \
-	LIBDIR=%{_lib}
+%{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_lib}"
 
 lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
