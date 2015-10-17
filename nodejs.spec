@@ -46,6 +46,7 @@ BuildRequires:	sed >= 4.0
 %{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.18-2}
 BuildRequires:	zlib-devel
 Requires:	ca-certificates
+Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
 Obsoletes:	nodejs-waf
 ExclusiveArch:	%{ix86} %{x8664} arm
