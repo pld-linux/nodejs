@@ -74,6 +74,9 @@ Development headers for nodejs.
 %package doc
 Summary:	Evented I/O for V8 JavaScript - documentation
 Group:		Documentation
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description doc
 Node.js is a server-side JavaScript environment that uses an
