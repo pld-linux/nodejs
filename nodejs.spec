@@ -9,12 +9,12 @@
 
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	4.2.1
-Release:	0.2
+Version:	4.2.3
+Release:	0.1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	41d2b9fb5220af3fd98dd70fb33a2a10
+# Source0-md5:	529a8abd4ca5a2225636767d3f14c382
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
