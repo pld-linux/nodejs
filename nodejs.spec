@@ -1,4 +1,8 @@
-#
+# TODO
+# - unpackaged files
+#   /usr/share/doc/node/gdbinit
+#   /usr/share/systemtap/tapset/node.stp
+
 # Conditional build:
 %bcond_with	system_v8	# system v8
 %bcond_without	system_uv	# system uv
