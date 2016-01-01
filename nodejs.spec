@@ -4,7 +4,6 @@
 #   /usr/share/systemtap/tapset/node.stp
 
 # Conditional build:
-%bcond_with	system_v8	# system v8
 %bcond_without	system_uv	# system uv
 %bcond_with	shared	# build libnode.so shared library
 
@@ -45,7 +44,6 @@ BuildRequires:	python-jsmin
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
-%{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.18-2}
 BuildRequires:	zlib-devel
 Requires:	ca-certificates
 Obsoletes:	nodejs-waf
@@ -71,7 +69,6 @@ Requires:	http-parser-devel
 Requires:	libstdc++-devel
 %{?with_system_uv:Requires:	libuv-devel}
 Requires:	openssl-devel
-%{?with_system_v8:Requires:	v8-devel}
 Requires:	zlib-devel
 
 %description devel
@@ -112,7 +109,6 @@ rm -r deps/npm
 rm -r deps/http_parser
 rm -r deps/openssl
 %{?with_system_uv:rm -r deps/uv}
-%{?with_system_v8:rm -r deps/v8}
 rm -r deps/zlib
 
 %build
@@ -121,7 +117,6 @@ CC="%{__cc}" \
 CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
-	%{?with_system_v8:--shared-v8} \
 	--shared-zlib \
 	--shared-openssl \
 	%{?0:--shared-cares} \
