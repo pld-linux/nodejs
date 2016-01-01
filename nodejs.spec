@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_without	system_v8	# system v8
-%bcond_without	system_uv	# system uv
+%bcond_with	system_uv	# system uv
 %bcond_without	shared	# build libnode.so shared library
 
 # NOTES:
