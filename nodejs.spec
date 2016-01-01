@@ -26,12 +26,11 @@ Patch3:		%{name}-lib64path.patch
 Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
 URL:		https://nodejs.org/
-BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
 BuildRequires:	http-parser-devel >= 2.5.0
 BuildRequires:	libstdc++-devel
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
-BuildRequires:	openssl-devel
+BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
@@ -57,11 +56,10 @@ across distributed devices.
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	c-ares-devel
 Requires:	gcc
-Requires:	http-parser-devel
+Requires:	http-parser-devel >= 2.5.0
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel}
+%{?with_system_uv:Requires:	libuv-devel >= 1.6.0}
 Requires:	openssl-devel
 Requires:	zlib-devel
 
@@ -97,7 +95,6 @@ This package contains the documentation for nodejs.
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 rm -r deps/npm
-#rm -r deps/cares
 rm -r deps/http_parser
 rm -r deps/openssl
 %{?with_system_uv:rm -r deps/uv}
