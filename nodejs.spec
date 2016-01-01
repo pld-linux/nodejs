@@ -90,6 +90,7 @@ This package contains the documentation for nodejs.
 %patch2 -p1
 %endif
 %patch4 -p1
+rm src/node_root_certs.h
 #%{?with_system_uv:%patch5 -p1}
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
