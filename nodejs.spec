@@ -25,12 +25,6 @@ Patch2:		%{name}-libpath.patch
 Patch3:		%{name}-lib64path.patch
 Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
-# The invalid UTF8 fix has been reverted since this breaks v8 API, which cannot
-# be done in a stable distribution release.  This build of nodejs will behave as
-# if NODE_INVALID_UTF8 was set.  For more information on the implications, see:
-# http://blog.nodejs.org/2014/06/16/openssl-and-breaking-utf-8-change/
-Patch6:		%{name}-revert-utf8-v8.patch
-Patch7:		%{name}-revert-utf8-node.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
@@ -99,8 +93,6 @@ This package contains the documentation for nodejs.
 %endif
 %patch4 -p1
 #%{?with_system_uv:%patch5 -p1}
-#%patch6 -p1
-#%patch7 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
