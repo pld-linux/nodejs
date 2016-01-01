@@ -34,6 +34,7 @@ BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
+BuildRequires:	python-modules
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
