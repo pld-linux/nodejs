@@ -11,12 +11,12 @@
 %define		node_module_version	11
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.40
-Release:	4
+Version:	0.10.41
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	f6ef20f327ecd6cb1586c41c7184290c
+# Source0-md5:	23822b192b74640551a20b680c150273
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -53,6 +53,8 @@ ExclusiveArch:	%{ix86} %{x8664} arm
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		sover	%(echo %{version} | cut -d. -f2)
+# add macro, so adapter won't replace it back literal
+%define		doc_ver	%{version}
 
 %description
 Node.js is a platform built on Chrome's JavaScript runtime for easily
@@ -80,6 +82,7 @@ Development headers for nodejs.
 %package doc
 Summary:	Evented I/O for V8 JavaScript - documentation
 Group:		Documentation
+URL:		https://nodejs.org/dist/v%{doc_ver}/docs/api
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
