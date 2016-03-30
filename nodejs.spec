@@ -1,8 +1,11 @@
-#
+# TODO
+# - unpackaged files
+#   /usr/share/doc/node/gdbinit
+#   /usr/share/systemtap/tapset/node.stp
+
 # Conditional build:
-%bcond_without	system_v8	# system v8
-%bcond_with	system_uv	# system uv
-%bcond_without	shared	# build libnode.so shared library
+%bcond_without	system_uv	# system uv
+%bcond_with	shared	# build libnode.so shared library
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
@@ -11,12 +14,13 @@
 %define		node_module_version	11
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-Version:	0.10.41
-Release:	2
+# 4.2.x is LTS
+Version:	4.2.6
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	23822b192b74640551a20b680c150273
+# Source0-md5:	b1287c356e904954da7e0c6435ff9948
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -24,26 +28,19 @@ Patch2:		%{name}-libpath.patch
 Patch3:		%{name}-lib64path.patch
 Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
-# The invalid UTF8 fix has been reverted since this breaks v8 API, which cannot
-# be done in a stable distribution release.  This build of nodejs will behave as
-# if NODE_INVALID_UTF8 was set.  For more information on the implications, see:
-# http://blog.nodejs.org/2014/06/16/openssl-and-breaking-utf-8-change/
-Patch6:		%{name}-revert-utf8-v8.patch
-Patch7:		%{name}-revert-utf8-node.patch
 URL:		https://nodejs.org/
-BuildRequires:	c-ares-devel
 BuildRequires:	gcc >= 5:4.0
-BuildRequires:	http-parser-devel >= 2.0
+BuildRequires:	http-parser-devel >= 2.5.0
 BuildRequires:	libstdc++-devel
-%{?with_system_uv:BuildRequires:	libuv-devel >= 0.10}
-BuildRequires:	openssl-devel
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
+BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.5.2
 BuildRequires:	python-jsmin
+BuildRequires:	python-modules
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
-%{?with_system_v8:BuildRequires:	v8-devel >= 3.15.11.18-2}
 BuildRequires:	zlib-devel
 Requires:	ca-certificates
 Provides:	nodejs(engine) = %{version}
@@ -67,13 +64,11 @@ across distributed devices.
 Summary:	Development headers for nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	c-ares-devel
 Requires:	gcc
-Requires:	http-parser-devel
+Requires:	http-parser-devel >= 2.5.0
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel}
+%{?with_system_uv:Requires:	libuv-devel >= 1.6.0}
 Requires:	openssl-devel
-%{?with_system_v8:Requires:	v8-devel}
 Requires:	zlib-devel
 
 %description devel
@@ -97,42 +92,36 @@ This package contains the documentation for nodejs.
 %prep
 %setup -q -n node-v%{version}
 %{?with_shared:%patch1 -p1}
+#%patch1 -p1
 %if %{_lib} == "lib64"
 %patch3 -p1
 %else
 %patch2 -p1
 %endif
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
+rm src/node_root_certs.h
+#%{?with_system_uv:%patch5 -p1}
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 rm -r deps/npm
-rm -r deps/cares
 rm -r deps/http_parser
 rm -r deps/openssl
 %{?with_system_uv:rm -r deps/uv}
-%{?with_system_v8:rm -r deps/v8}
 rm -r deps/zlib
 
 %build
-ver=$(awk '/#define NODE_MODULE_VERSION/{print $NF}' src/node.h)
-if [ $ver != %{node_module_version} ]; then
-	echo "Set %%define node_module_version to $ver and re-run."
-	exit 1
-fi
+ver=$(awk '/#define NODE_MODULE_VERSION/{print $NF}' src/node_version.h)
+test "$ver" = "%{node_module_version}"
 
 # CC used only to detect if CC is clang, not used for compiling
 CC="%{__cc}" \
 CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
-	%{?with_system_v8:--shared-v8} \
 	--shared-zlib \
 	--shared-openssl \
-	--shared-cares \
+	%{?0:--shared-cares} \
 	%{?with_system_uv:--shared-libuv} \
 	--shared-http-parser \
 	--without-npm \
@@ -147,7 +136,7 @@ LDFLAGS="%{rpmldflags}" \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_lib}"
+%{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
 
 %if %{with shared}
 lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
@@ -204,7 +193,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md AUTHORS ChangeLog LICENSE
+%doc README.md AUTHORS CHANGELOG.md ROADMAP.md LICENSE
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %if %{with shared}
