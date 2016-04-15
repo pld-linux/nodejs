@@ -11,7 +11,7 @@
 # - https://nodejs.org/en/download/releases/
 
 # see "Modules" column in https://nodejs.org/en/download/releases/
-%define		node_module_version	11
+%define		node_module_version	46
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 # 4.2.x is LTS
@@ -111,7 +111,7 @@ rm -r deps/openssl
 rm -r deps/zlib
 
 %build
-ver=$(awk '/#define NODE_MODULE_VERSION/{print $NF}' src/node_version.h)
+ver=$(awk '/#define NODE_MODULE_VERSION/{print $3}' src/node_version.h)
 test "$ver" = "%{node_module_version}"
 
 # CC used only to detect if CC is clang, not used for compiling
