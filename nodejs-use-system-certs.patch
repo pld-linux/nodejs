@@ -1,15 +1,12 @@
 Description: do not bundle CA certificates, openssl on Debian have them
  As a consequence, nodejs must depend on ca-certificates.
-Forwarded: need some feedback before submitting the matter upstream
+Forwarded: https://github.com/nodejs/node/issues/3159
 Author: Jérémy Lal <kapouer@melix.org>
-Last-Update: 2014-03-02
-
-Modified 2014-05-02 by T.C. Hollingsworth <tchollingsworth@gmail.com> with the correct path for Fedora
 Modified 2014-08-11 by Elan Ruusamäe <glen@delfi.ee> with the correct path for PLD
 Modified 2015-10-17 by Elan Ruusamäe <glen@delfi.ee> updated for node 4.2.1-LTS
---- node-v4.2.1/src/node_crypto.cc	2015-10-17 15:14:47.248709690 +0300
-+++ node-v4.2.1/src/node_crypto.cc	2015-10-17 15:21:21.109176336 +0300
-@@ -127,7 +127,6 @@
+--- nodejs-4.5.0/src/node_crypto.cc.orig	2016-08-16 17:09:50.000000000 +0200
++++ nodejs-4.5.0/src/node_crypto.cc	2016-09-09 23:40:11.959456422 +0200
+@@ -117,7 +117,6 @@
  static uv_mutex_t* locks;
  
  const char* const root_certs[] = {
@@ -17,22 +14,19 @@ Modified 2015-10-17 by Elan Ruusamäe <glen@delfi.ee> updated for node 4.2.1-LTS
  };
  
  X509_STORE* root_cert_store;
-@@ -706,32 +705,17 @@
+@@ -754,29 +753,18 @@
    CHECK_EQ(sc->ca_store_, nullptr);
  
    if (!root_cert_store) {
 -    root_cert_store = X509_STORE_new();
 -
--    for (size_t i = 0; i < ARRAY_SIZE(root_certs); i++) {
--      BIO* bp = NodeBIO::New();
--
--      if (!BIO_write(bp, root_certs[i], strlen(root_certs[i]))) {
--        BIO_free_all(bp);
+-    for (size_t i = 0; i < arraysize(root_certs); i++) {
+-      BIO* bp = NodeBIO::NewFixed(root_certs[i], strlen(root_certs[i]));
+-      if (bp == nullptr) {
 -        return;
 -      }
 -
 -      X509 *x509 = PEM_read_bio_X509(bp, nullptr, CryptoPemCallback, nullptr);
--
 -      if (x509 == nullptr) {
 -        BIO_free_all(bp);
 -        return;
@@ -45,13 +39,16 @@ Modified 2015-10-17 by Elan Ruusamäe <glen@delfi.ee> updated for node 4.2.1-LTS
 +    if (SSL_CTX_load_verify_locations(sc->ctx_, "/etc/certs/ca-certificates.crt", NULL) == 1) {
 +      root_cert_store = SSL_CTX_get_cert_store(sc->ctx_);
 +    } else {
-+      // empty store
++      // new empty store
 +      root_cert_store = X509_STORE_new();
      }
 +  } else {
 +    SSL_CTX_set_cert_store(sc->ctx_, root_cert_store);
    }
  
++
    sc->ca_store_ = root_cert_store;
 -  SSL_CTX_set_cert_store(sc->ctx_, sc->ca_store_);
  }
+ 
+ 

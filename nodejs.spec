@@ -14,13 +14,13 @@
 %define		node_module_version	46
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-# 4.2.x is LTS
-Version:	4.2.6
+# 4.5.0 is LTS
+Version:	4.5.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	b1287c356e904954da7e0c6435ff9948
+# Source0-md5:	1885586b4b8a2263f77dce27855661e9
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -30,12 +30,12 @@ Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
 URL:		https://nodejs.org/
 BuildRequires:	gcc >= 5:4.0
-BuildRequires:	http-parser-devel >= 2.5.0
+BuildRequires:	http-parser-devel >= 2.7.0
 BuildRequires:	libstdc++-devel
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
-BuildRequires:	python >= 1:2.5.2
+BuildRequires:	python >= 2.7
 BuildRequires:	python-jsmin
 BuildRequires:	python-modules
 BuildRequires:	rpm >= 4.4.9-56
@@ -180,7 +180,7 @@ EOF
 # install documentation
 install -d $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
 cp -a doc/api/* $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.markdown
+rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.md
 rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.json
 
 %clean
