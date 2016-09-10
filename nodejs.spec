@@ -35,7 +35,7 @@ BuildRequires:	libstdc++-devel
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
-BuildRequires:	python >= 2.7
+BuildRequires:	python >= 1:2.7
 BuildRequires:	python-jsmin
 BuildRequires:	python-modules
 BuildRequires:	rpm >= 4.4.9-56
