@@ -10,7 +10,11 @@
 # NOTES:
 # - https://nodejs.org/en/download/releases/
 
-# see "Modules" column in https://nodejs.org/en/download/releases/
+# NODE_MODULE_VERSION refers to the ABI (application binary interface) version
+# number of Node.js, used to determine which versions of Node.js compiled C++
+# add-on binaries can be loaded in to without needing to be re-compiled. It
+# used to be stored as hex value in earlier versions, but is now represented as
+# an integer.
 %define		node_module_version	46
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
