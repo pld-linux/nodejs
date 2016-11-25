@@ -15,16 +15,17 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	46
+%define		node_module_version	48
 Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
-# 4.5.0 is LTS
-Version:	4.5.0
+# 6.9 is LTS, Active LTS: 2018-04-18, EOL: 2019-04-18
+# https://github.com/nodejs/LTS
+Version:	6.9.1
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	1885586b4b8a2263f77dce27855661e9
+# Source0-md5:	0d3117846c6704b36108fcdbf30e03c1
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
