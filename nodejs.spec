@@ -20,12 +20,12 @@ Summary:	Asynchronous JavaScript Engine
 Name:		nodejs
 # 6.9 is LTS, Active LTS: 2018-04-18, EOL: 2019-04-18
 # https://github.com/nodejs/LTS
-Version:	6.9.1
+Version:	6.9.4
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	0d3117846c6704b36108fcdbf30e03c1
+# Source0-md5:	3795199b5950b25179248847b1a5fc86
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
