@@ -17,6 +17,7 @@
 # an integer.
 %define		node_module_version	48
 Summary:	Asynchronous JavaScript Engine
+Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
 # 6.9 is LTS, Active LTS: 2018-04-18, EOL: 2019-04-18
 # https://github.com/nodejs/LTS
@@ -65,8 +66,18 @@ event-driven, non-blocking I/O model that makes it lightweight and
 efficient, perfect for data-intensive real-time applications that run
 across distributed devices.
 
+%description -l pl.UTF-8
+Node.js to platforma zbudowana w opacriu o silnik JavaScriptu
+przeglądarki Chrome, służąca do tworzenia szybkich, skalowalnych
+aplikacji sieciowych. Node.js wykorzystuje nieblokujący model
+wejścia/wyjścia sterowany zdarzeniami, dzięki czemu jest lekki i
+wydajny, dobrze nadający się do aplikacji przetwarzających duże
+ilości danych w czasie rzeczywistym, uruchamianych na rozproszonych
+urządzeniach.
+
 %package devel
 Summary:	Development headers for nodejs
+Summary(pl.UTF-8):	Pliki nagłówkowe nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
@@ -79,8 +90,12 @@ Requires:	zlib-devel
 %description devel
 Development headers for nodejs.
 
+%description devel -l pl.UTF-8
+Pliki nagłówkowe nodejs.
+
 %package doc
-Summary:	Evented I/O for V8 JavaScript - documentation
+Summary:	Documentation for Node.js engine
+Summary(pl.UTF-8):	Dokumentacja silnika Node.js
 Group:		Documentation
 URL:		https://nodejs.org/dist/v%{doc_ver}/docs/api
 %if "%{_rpmversion}" >= "5"
@@ -92,7 +107,15 @@ Node.js is a server-side JavaScript environment that uses an
 asynchronous event-driven model. Node's goal is to provide an easy way
 to build scalable network programs.
 
-This package contains the documentation for nodejs.
+This package contains the documentation for Node.js.
+
+%description doc -l pl.UTF-8
+Node.js to serwerowe środowisko JavaScriptu wykorzystujące
+asynchroniczny model sterowany zdarzeniami. Celem Node jest
+zapewnienie łatwego sposobu tworzenia skalowalnych programów
+sieciowych.
+
+Ten pakiet zawiera dokumentację Node.js.
 
 %prep
 %setup -q -n node-v%{version}
@@ -104,16 +127,16 @@ This package contains the documentation for nodejs.
 %patch2 -p1
 %endif
 %patch4 -p1
-rm src/node_root_certs.h
+%{__rm} src/node_root_certs.h
 #%{?with_system_uv:%patch5 -p1}
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
-rm -r deps/npm
-rm -r deps/http_parser
-rm -r deps/openssl
-%{?with_system_uv:rm -r deps/uv}
-rm -r deps/zlib
+%{__rm} -r deps/npm
+%{__rm} -r deps/http_parser
+%{__rm} -r deps/openssl
+%{?with_system_uv:%{__rm} -r deps/uv}
+%{__rm} -r deps/zlib
 
 %build
 ver=$(awk '/#define NODE_MODULE_VERSION/{print $3}' src/node_version.h)
@@ -137,10 +160,13 @@ GYP_DEFINES="soname_version=%{sover}" \
 # CXXFLAGS must be exported, as it is needed for make, not gyp
 CXXFLAGS="%{rpmcxxflags} -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC" \
 LDFLAGS="%{rpmldflags}" \
-%{__make} -C out V=1 BUILDTYPE=Release
+%{__make} -C out \
+	BUILDTYPE=Release \
+	V=1
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 %{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
 
 %if %{with shared}
@@ -185,8 +211,8 @@ EOF
 # install documentation
 install -d $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
 cp -a doc/api/* $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.md
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.json
+%{__rm} $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.md
+%{__rm} $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/*.json
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -203,7 +229,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/nodejs
 %if %{with shared}
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
-%ghost %{_libdir}/libnode.so.10
+%attr(755,root,root) %ghost %{_libdir}/libnode.so.10
 %endif
 %if "%{_lib}" != "lib"
 %dir %{_libdir}/node
@@ -211,12 +237,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_prefix}/lib/node
 %dir %{_prefix}/lib/node_modules
 %{_mandir}/man1/node.1*
-%{_mandir}/man1/nodejs.1
+%{_mandir}/man1/nodejs.1*
 
 %files devel
 %defattr(644,root,root,755)
 %if %{with shared}
-%{_libdir}/libnode.so
+%attr(755,root,root) %{_libdir}/libnode.so
 %endif
 %{_includedir}/node
 %{_pkgconfigdir}/nodejs.pc
