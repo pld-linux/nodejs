@@ -1,11 +1,10 @@
 # TODO
 # - unpackaged files
 #   /usr/share/doc/node/gdbinit
-#   /usr/share/systemtap/tapset/node.stp
 
 # Conditional build:
 %bcond_without	system_uv	# system uv
-%bcond_with	shared	# build libnode.so shared library
+%bcond_with	shared		# build libnode.so shared library
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
@@ -35,15 +34,15 @@ Patch3:		%{name}-lib64path.patch
 Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
 URL:		https://nodejs.org/
-BuildRequires:	gcc >= 5:4.0
+BuildRequires:	gcc >= 6:4.8
 BuildRequires:	http-parser-devel >= 2.7.0
-BuildRequires:	libstdc++-devel
+BuildRequires:	libstdc++-devel >= 6:4.8
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.7
 BuildRequires:	python-jsmin
-BuildRequires:	python-modules
+BuildRequires:	python-modules >= 1:2.7
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
@@ -117,6 +116,19 @@ sieciowych.
 
 Ten pakiet zawiera dokumentację Node.js.
 
+%package -n systemtap-nodejs
+Summary:	systemtap/dtrace probes for Node.js
+Summary(pl.UTF-8):	Sondy systemtap/dtrace dla Node.js
+Group:		Development/Tools
+Requires:	%{name} = %{version}-%{release}
+Requires:	systemtap-client
+
+%description -n systemtap-nodejs
+systemtap/dtrace probes for Node.js.
+
+%description -n systemtap-nodejs -l pl.UTF-8
+Sondy systemtap/dtrace dla Node.js.
+
 %prep
 %setup -q -n node-v%{version}
 %{?with_shared:%patch1 -p1}
@@ -147,11 +159,11 @@ CC="%{__cc}" \
 CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
-	--shared-zlib \
-	--shared-openssl \
 	%{?0:--shared-cares} \
-	%{?with_system_uv:--shared-libuv} \
+	--shared-openssl \
 	--shared-http-parser \
+	%{?with_system_uv:--shared-libuv} \
+	--shared-zlib \
 	--without-npm \
 	--without-dtrace \
 	--prefix=%{_prefix}
@@ -251,3 +263,7 @@ rm -rf $RPM_BUILD_ROOT
 %files doc
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-doc-%{version}
+
+%files -n systemtap-nodejs
+%defattr(644,root,root,755)
+%{_datadir}/systemtap/tapset/node.stp
