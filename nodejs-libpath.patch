@@ -1,13 +1,11 @@
-diff -ur node-v0.9.9-0/lib/module.js node-v0.9.9/lib/module.js
---- node-v0.9.9-0/lib/module.js	2013-02-07 10:11:11.000000000 -0700
-+++ node-v0.9.9/lib/module.js	2013-02-15 21:40:33.000000000 -0700
-@@ -506,7 +506,7 @@
-     var homeDir = process.env.HOME;
+--- node-v6.11.5/lib/module.js~	2017-10-24 22:10:13.000000000 +0300
++++ node-v6.11.5/lib/module.js	2017-11-02 13:32:42.480301417 +0200
+@@ -625,7 +625,7 @@
+   } else {
+     prefixDir = path.resolve(process.execPath, '..', '..');
    }
- 
--  var paths = [path.resolve(process.execPath, '..', '..', 'lib', 'node')];
-+  var paths = ["/usr/lib/node", "/usr/lib/node_modules"];
+-  var paths = [path.resolve(prefixDir, 'lib', 'node')];
++  var paths = ["/usr/lib/node", "/usr/lib/node_modules", path.resolve(prefixDir, 'lib', 'node')];
  
    if (homeDir) {
      paths.unshift(path.resolve(homeDir, '.node_libraries'));
-Only in node-v0.9.9/lib: module.js~
