@@ -23,7 +23,7 @@ Name:		nodejs
 # Maintenance start: April 2018
 # Maintenance end: April 2019
 Version:	6.11.5
-Release:	0.1
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -33,7 +33,6 @@ Patch1:		%{name}-shared.patch
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
-Patch4:		%{name}-use-system-certs.patch
 Patch5:		uv-fpic.patch
 URL:		https://nodejs.org/
 BuildRequires:	gcc >= 6:4.8
@@ -140,8 +139,6 @@ Sondy systemtap/dtrace dla Node.js.
 %else
 %patch2 -p1
 %endif
-#%patch4 -p1
-#%{__rm} src/node_root_certs.h
 #%{?with_system_uv:%patch5 -p1}
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
@@ -161,6 +158,7 @@ CC="%{__cc}" \
 CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
+	--openssl-use-def-ca-store \
 	%{?0:--shared-cares} \
 	--shared-openssl \
 	--shared-http-parser \
