@@ -4,51 +4,48 @@ Forwarded: https://github.com/nodejs/node/issues/3159
 Author: Jérémy Lal <kapouer@melix.org>
 Modified 2014-08-11 by Elan Ruusamäe <glen@delfi.ee> with the correct path for PLD
 Modified 2015-10-17 by Elan Ruusamäe <glen@delfi.ee> updated for node 4.2.1-LTS
---- nodejs-4.5.0/src/node_crypto.cc.orig	2016-08-16 17:09:50.000000000 +0200
-+++ nodejs-4.5.0/src/node_crypto.cc	2016-09-09 23:40:11.959456422 +0200
-@@ -117,7 +117,6 @@
- static uv_mutex_t* locks;
+Modified 2017-11-02 by Elan Ruusamäe <glen@delfi.ee> updated for node 6.11.5-LTS
+--- node-v6.11.5/src/node_crypto.cc~	2017-10-24 22:10:14.000000000 +0300
++++ node-v6.11.5/src/node_crypto.cc	2017-11-02 13:38:45.435760247 +0200
+@@ -121,8 +121,6 @@
+ static Mutex* mutexes;
  
- const char* const root_certs[] = {
+ static const char* const root_certs[] = {
 -#include "node_root_certs.h"  // NOLINT(build/include_order)
- };
+-};
  
- X509_STORE* root_cert_store;
-@@ -754,29 +753,18 @@
-   CHECK_EQ(sc->ca_store_, nullptr);
+ static std::string extra_root_certs_file;  // NOLINT(runtime/string)
+ 
+@@ -850,24 +848,18 @@
+   (void) &clear_error_on_return;  // Silence compiler warning.
  
    if (!root_cert_store) {
--    root_cert_store = X509_STORE_new();
+-    root_cert_store = NewRootCertStore();
 -
--    for (size_t i = 0; i < arraysize(root_certs); i++) {
--      BIO* bp = NodeBIO::NewFixed(root_certs[i], strlen(root_certs[i]));
--      if (bp == nullptr) {
--        return;
+-    if (!extra_root_certs_file.empty()) {
+-      unsigned long err = AddCertsFromFile(  // NOLINT(runtime/int)
+-                                           root_cert_store,
+-                                           extra_root_certs_file.c_str());
+-      if (err) {
+-        ProcessEmitWarning(sc->env(),
+-                           "Ignoring extra certs from `%s`, load failed: %s\n",
+-                           extra_root_certs_file.c_str(),
+-                           ERR_error_string(err, nullptr));
 -      }
--
--      X509 *x509 = PEM_read_bio_X509(bp, nullptr, CryptoPemCallback, nullptr);
--      if (x509 == nullptr) {
--        BIO_free_all(bp);
--        return;
--      }
--
--      X509_STORE_add_cert(root_cert_store, x509);
--
--      BIO_free_all(bp);
--      X509_free(x509);
-+    if (SSL_CTX_load_verify_locations(sc->ctx_, "/etc/certs/ca-certificates.crt", NULL) == 1) {
-+      root_cert_store = SSL_CTX_get_cert_store(sc->ctx_);
-+    } else {
-+      // new empty store
-+      root_cert_store = X509_STORE_new();
-     }
-+  } else {
-+    SSL_CTX_set_cert_store(sc->ctx_, root_cert_store);
+-    }
++     if (SSL_CTX_load_verify_locations(sc->ctx_, "/etc/certs/ca-certificates.crt", NULL) == 1) {
++       root_cert_store = SSL_CTX_get_cert_store(sc->ctx_);
++     } else {
++       // new empty store
++       root_cert_store = NewRootCertStore();
++     }
++   } else {
++     SSL_CTX_set_cert_store(sc->ctx_, root_cert_store);
    }
  
-+
-   sc->ca_store_ = root_cert_store;
--  SSL_CTX_set_cert_store(sc->ctx_, sc->ca_store_);
+   // Increment reference count so global store is not deleted along with CTX.
+   X509_STORE_up_ref(root_cert_store);
+-  SSL_CTX_set_cert_store(sc->ctx_, root_cert_store);
  }
  
  

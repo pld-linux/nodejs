@@ -18,14 +18,16 @@
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 6.9 is LTS, Active LTS: 2018-04-18, EOL: 2019-04-18
-# https://github.com/nodejs/LTS
-Version:	6.9.4
-Release:	1
+# 6.x LTS - https://github.com/nodejs/LTS:
+# Active start: 2016-10-18
+# Maintenance start: April 2018
+# Maintenance end: April 2019
+Version:	6.11.5
+Release:	0.1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	3795199b5950b25179248847b1a5fc86
+# Source0-md5:	7a3159a3245a45ff6e6f546ffdfa1160
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -138,8 +140,8 @@ Sondy systemtap/dtrace dla Node.js.
 %else
 %patch2 -p1
 %endif
-%patch4 -p1
-%{__rm} src/node_root_certs.h
+#%patch4 -p1
+#%{__rm} src/node_root_certs.h
 #%{?with_system_uv:%patch5 -p1}
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
@@ -236,7 +238,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md AUTHORS CHANGELOG.md ROADMAP.md LICENSE
+%doc README.md AUTHORS CHANGELOG.md LICENSE
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %if %{with shared}
