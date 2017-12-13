@@ -14,7 +14,7 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	48
+%define		node_module_version	57
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
@@ -22,12 +22,12 @@ Name:		nodejs
 # Active start: 2016-10-18
 # Maintenance start: April 2018
 # Maintenance end: April 2019
-Version:	6.11.5
+Version:	8.9.3
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	7a3159a3245a45ff6e6f546ffdfa1160
+# Source0-md5:	88c12ccd5806a101b00139140d958c2b
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -38,7 +38,7 @@ URL:		https://nodejs.org/
 BuildRequires:	gcc >= 6:4.8
 BuildRequires:	http-parser-devel >= 2.7.0
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.6.0}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.18.0}
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.7
