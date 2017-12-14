@@ -18,10 +18,10 @@
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 6.x LTS - https://github.com/nodejs/LTS:
-# Active start: 2016-10-18
-# Maintenance start: April 2018
-# Maintenance end: April 2019
+# 8.x LTS - https://github.com/nodejs/LTS:
+# Active start: 2017-10-31
+# Maintenance start: April 2019
+# Maintenance end: December 2019
 Version:	8.9.3
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
