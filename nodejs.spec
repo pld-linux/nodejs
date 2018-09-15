@@ -23,7 +23,7 @@ Name:		nodejs
 # Maintenance start: April 2019
 # Maintenance end: December 2019
 Version:	8.9.3
-Release:	1
+Release:	2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
