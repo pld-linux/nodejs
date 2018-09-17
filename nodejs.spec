@@ -22,12 +22,12 @@ Name:		nodejs
 # Active start: 2017-10-31
 # Maintenance start: April 2019
 # Maintenance end: December 2019
-Version:	8.9.3
-Release:	2
+Version:	8.12.0
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	88c12ccd5806a101b00139140d958c2b
+# Source0-md5:	5690333b77964edf81945fc724f6ea85
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
