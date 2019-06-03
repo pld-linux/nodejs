@@ -14,20 +14,20 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	57
+%define		node_module_version	64
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 8.x LTS - https://github.com/nodejs/Release
-# Active start: 2017-10-31
-# Maintenance start: April 2019
-# Maintenance end: December 2019
-Version:	8.16.0
+# 10.x LTS - https://github.com/nodejs/Release
+# Active start: 2018-10-30
+# Maintenance start: April 2020
+# Maintenance end: April 2021
+Version:	10.16.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	e3bb729fd8cde08db6ae1a8b56db2f44
+# Source0-md5:	46f47630e088540968962f1ad71b9d0a
 Patch1:		%{name}-shared.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -36,9 +36,9 @@ Patch3:		%{name}-lib64path.patch
 Patch5:		uv-fpic.patch
 URL:		https://nodejs.org/
 BuildRequires:	gcc >= 6:4.8
-BuildRequires:	http-parser-devel >= 2.7.0
+BuildRequires:	http-parser-devel >= 2.9.2
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.18.0}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.29.0}
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.7
@@ -81,9 +81,9 @@ Summary(pl.UTF-8):	Pliki nagłówkowe nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
-Requires:	http-parser-devel >= 2.5.0
+Requires:	http-parser-devel >= 2.9.2
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel >= 1.6.0}
+%{?with_system_uv:Requires:	libuv-devel >= 1.29.0}
 Requires:	openssl-devel
 Requires:	zlib-devel
 
