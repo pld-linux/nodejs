@@ -1,6 +1,6 @@
---- node-v6.11.5/lib/module.js~	2017-10-24 22:10:13.000000000 +0300
-+++ node-v6.11.5/lib/module.js	2017-11-02 13:32:42.480301417 +0200
-@@ -625,7 +625,7 @@
+--- node-v10.16.0/lib/internal/modules/cjs/loader.js~	2019-05-28 23:32:23.000000000 +0200
++++ node-v10.16.0/lib/internal/modules/cjs/loader.js	2019-06-03 09:11:35.662170541 +0200
+@@ -861,7 +861,7 @@ Module._initPaths = function() {
    } else {
      prefixDir = path.resolve(process.execPath, '..', '..');
    }
