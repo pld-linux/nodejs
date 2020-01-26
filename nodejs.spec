@@ -23,7 +23,7 @@ Name:		nodejs
 # Maintenance start: October 2020
 # Maintenance end: April 2022
 Version:	12.14.1
-Release:	1
+Release:	2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -44,7 +44,7 @@ BuildRequires:	llhttp-devel
 %endif
 BuildRequires:	libicu-devel >= 0.64
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.29.0}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.34.0}
 BuildRequires:	nghttp2-devel >= 1.39.1
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
@@ -90,7 +90,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
 %{?with_http_parse:Requires:	http-parser-devel >= 2.9.2}
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel >= 1.29.0}
+%{?with_system_uv:Requires:	libuv-devel >= 1.34.0}
 Requires:	openssl-devel
 Requires:	zlib-devel
 
