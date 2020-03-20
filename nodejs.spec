@@ -17,7 +17,7 @@
 %define		node_module_version	57
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
-Name:		nodejs
+Name:		nodejs8
 # 8.x LTS - https://github.com/nodejs/Release
 # Active start: 2017-10-31
 # Maintenance start: April 2019
@@ -117,17 +117,17 @@ sieciowych.
 
 Ten pakiet zawiera dokumentację Node.js.
 
-%package -n systemtap-nodejs
+%package -n systemtap-%{name}
 Summary:	systemtap/dtrace probes for Node.js
 Summary(pl.UTF-8):	Sondy systemtap/dtrace dla Node.js
 Group:		Development/Tools
 Requires:	%{name} = %{version}-%{release}
 Requires:	systemtap-client
 
-%description -n systemtap-nodejs
+%description -n systemtap-%{name}
 systemtap/dtrace probes for Node.js.
 
-%description -n systemtap-nodejs -l pl.UTF-8
+%description -n systemtap-%{name} -l pl.UTF-8
 Sondy systemtap/dtrace dla Node.js.
 
 %prep
@@ -257,13 +257,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libnode.so
 %endif
 %{_includedir}/node
-%{_pkgconfigdir}/nodejs.pc
+%{_pkgconfigdir}/nodejs8.pc
 %{_usrsrc}/%{name}
 
 %files doc
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-doc-%{version}
 
-%files -n systemtap-nodejs
+%files -n systemtap-%{name}
 %defattr(644,root,root,755)
 %{_datadir}/systemtap/tapset/node.stp
