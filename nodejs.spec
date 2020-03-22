@@ -5,6 +5,7 @@
 # Conditional build:
 %bcond_without	system_uv	# system uv
 %bcond_with	shared		# build libnode.so shared library
+%bcond_with	default_node	# build this as default node binary in system
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
@@ -15,6 +16,7 @@
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
 %define		node_module_version	57
+%define		node_version 8
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs8
@@ -178,16 +180,16 @@ LDFLAGS="%{rpmldflags}" \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 %{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
+
+mv $RPM_BUILD_ROOT%{_bindir}/{node,node-%{node_version}}
+mv $RPM_BUILD_ROOT%{_mandir}/man1/{node,node-%{node_version}}.1
 
 %if %{with shared}
 lib=$(basename $RPM_BUILD_ROOT%{_libdir}/libnode.so.*.*.*)
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so.10
 ln -s $lib $RPM_BUILD_ROOT%{_libdir}/libnode.so
 %endif
-
-echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
 
 install -d $RPM_BUILD_ROOT%{_includedir}/node
 cp -p src/*.h $RPM_BUILD_ROOT%{_includedir}/node
@@ -197,8 +199,12 @@ install -d $RPM_BUILD_ROOT%{_usrsrc}/%{name}
 cp -p common.gypi $RPM_BUILD_ROOT%{_usrsrc}/%{name}
 ln -s %{_includedir}/node $RPM_BUILD_ROOT%{_usrsrc}/%{name}/src
 
+%if %{with default_node}
+ln -s node-%{node_version} $RPM_BUILD_ROOT%{_bindir}/node
 # for compat of fedora derivered scripts (shebangs)
-ln -s node $RPM_BUILD_ROOT%{_bindir}/nodejs
+ln -s node-%{node_version} $RPM_BUILD_ROOT%{_bindir}/nodejs
+echo '.so man1/node.1' > $RPM_BUILD_ROOT%{_mandir}/man1/nodejs.1
+%endif
 
 # globally installed node modules (noarch)
 install -d $RPM_BUILD_ROOT%{_prefix}/lib/node_modules
@@ -237,8 +243,11 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.md AUTHORS CHANGELOG.md LICENSE
+%attr(755,root,root) %{_bindir}/node-%{node_version}
+%if %{with default_node}
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
+%endif
 %if %{with shared}
 %attr(755,root,root) %{_libdir}/libnode.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libnode.so.10
@@ -248,8 +257,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %dir %{_prefix}/lib/node
 %dir %{_prefix}/lib/node_modules
+%{_mandir}/man1/node-%{node_version}.1*
+%if %{with default_node}
 %{_mandir}/man1/node.1*
 %{_mandir}/man1/nodejs.1*
+%endif
 
 %files devel
 %defattr(644,root,root,755)
