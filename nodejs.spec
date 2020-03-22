@@ -4,7 +4,7 @@
 
 # Conditional build:
 %bcond_without	system_uv	# system uv
-%bcond_with	httpparse	# use system http-parser and llhttp
+%bcond_with	http_parser	# use system http-parser and llhttp
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
@@ -22,12 +22,12 @@ Name:		nodejs
 # Active start: 2019-10-21
 # Maintenance start: October 2020
 # Maintenance end: April 2022
-Version:	12.14.1
-Release:	2
+Version:	12.16.1
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	7f2fa2f5df2b8179b5b00ec7de361b34
+# Source0-md5:	99f580f6066c53b7bf4b5f02b81dac29
 
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -38,14 +38,14 @@ Patch5:		0002-Install-both-binaries-and-use-libdir.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.14.0
 BuildRequires:	gcc >= 6:4.8
-%if %{with httpparse}
-BuildRequires:	http-parser-devel >= 2.9.2
-BuildRequires:	llhttp-devel
+%if %{with http_parser}
+BuildRequires:	http-parser-devel >= 2.9.3
+BuildRequires:	llhttp-devel >= 2.0.1
 %endif
 BuildRequires:	libicu-devel >= 0.64
 BuildRequires:	libstdc++-devel >= 6:4.8
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.34.0}
-BuildRequires:	nghttp2-devel >= 1.39.1
+BuildRequires:	nghttp2-devel >= 1.40.0
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.7
@@ -55,11 +55,14 @@ BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel
+%{?with_http_parser:Requires:	http-parser >= 2.9.3}
+%{?with_system_uv:Requires:	libuv >= 1.34.0}
+Requires:	nghttp2 >= 1.40.0
 Requires:	ca-certificates
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
 Obsoletes:	nodejs-waf
-ExclusiveArch:	%{ix86} %{x8664} arm
+ExclusiveArch:	%{ix86} %{x8664} %{arm}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		sover	%(echo %{version} | cut -d. -f2)
@@ -88,7 +91,7 @@ Summary(pl.UTF-8):	Pliki nagłówkowe nodejs
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
-%{?with_http_parse:Requires:	http-parser-devel >= 2.9.2}
+%{?with_http_parser:Requires:	http-parser-devel >= 2.9.3}
 Requires:	libstdc++-devel
 %{?with_system_uv:Requires:	libuv-devel >= 1.34.0}
 Requires:	openssl-devel
@@ -105,7 +108,7 @@ Summary:	Documentation for Node.js engine
 Summary(pl.UTF-8):	Dokumentacja silnika Node.js
 Group:		Documentation
 URL:		https://nodejs.org/dist/v%{doc_ver}/docs/api
-%if "%{_rpmversion}" >= "5"
+%if "%{_rpmversion}" >= "4.6"
 BuildArch:	noarch
 %endif
 
@@ -151,7 +154,7 @@ Sondy systemtap/dtrace dla Node.js.
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
 %{__rm} -r deps/npm
-%{?with_httpparse:%{__rm} -r deps/http_parser}
+%{?with_http_parser:%{__rm} -r deps/http_parser}
 %{__rm} -r deps/openssl
 %{?with_system_uv:%{__rm} -r deps/uv}
 %{__rm} -r deps/zlib
@@ -165,19 +168,19 @@ CC="%{__cc}" \
 CXX="%{__cxx}" \
 GYP_DEFINES="soname_version=%{sover}" \
 ./configure \
+	--prefix=%{_prefix} \
+	--libdir=%{_lib} \
 	--openssl-use-def-ca-store \
 	--shared \
 	--shared-cares \
-	--shared-openssl \
-	%{?with_http_parse:--shared-http-parser} \
-	--shared-nghttp2 \
-	--with-intl=system-icu \
+	%{?with_http_parser:--shared-http-parser} \
 	%{?with_system_uv:--shared-libuv} \
+	--shared-nghttp2 \
+	--shared-openssl \
 	--shared-zlib \
-	--without-npm \
+	--with-intl=system-icu \
 	--without-dtrace \
-	--libdir=%{_lib} \
-	--prefix=%{_prefix}
+	--without-npm
 
 # add LFS defines from libuv (RHBZ#892601)
 # CXXFLAGS must be exported, as it is needed for make, not gyp
@@ -241,7 +244,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md AUTHORS CHANGELOG.md LICENSE
+%doc AUTHORS CHANGELOG.md LICENSE README.md SECURITY.md
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.%{node_module_version}

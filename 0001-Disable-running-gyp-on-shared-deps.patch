@@ -27,3 +27,15 @@ index 0947300f24028d00bcfb79b38d96bded136228e3..5d4f88a705053fbdd6b56ec85e999767
 -- 
 2.23.0
 
+--- node-v12.16.1/deps/uvwasi/uvwasi.gyp.orig	2020-02-18 06:08:33.000000000 +0100
++++ node-v12.16.1/deps/uvwasi/uvwasi.gyp	2020-03-21 17:51:55.372551818 +0100
+@@ -14,9 +14,6 @@
+         'src/uv_mapping.c',
+         'src/uvwasi.c',
+       ],
+-      'dependencies': [
+-        '../uv/uv.gyp:libuv',
+-      ],
+       'direct_dependent_settings': {
+         'include_dirs': ['include']
+       },
