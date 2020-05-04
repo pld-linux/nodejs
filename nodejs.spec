@@ -62,7 +62,7 @@ Requires:	ca-certificates
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
 Obsoletes:	nodejs-waf
-ExclusiveArch:	%{ix86} %{x8664} %{arm}
+ExclusiveArch:	%{ix86} %{x8664} %{arm} aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		sover	%(echo %{version} | cut -d. -f2)
