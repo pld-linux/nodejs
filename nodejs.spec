@@ -23,7 +23,7 @@ Name:		nodejs
 # Maintenance start: October 2020
 # Maintenance end: April 2022
 Version:	12.16.1
-Release:	1
+Release:	2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
@@ -57,7 +57,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel
 %{?with_http_parser:Requires:	http-parser >= 2.9.3}
 %{?with_system_uv:Requires:	libuv >= 1.34.0}
-Requires:	nghttp2 >= 1.40.0
+Requires:	nghttp2-libs >= 1.40.0
 Requires:	ca-certificates
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
