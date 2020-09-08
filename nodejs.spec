@@ -22,12 +22,12 @@ Name:		nodejs
 # Active start: 2019-10-21
 # Maintenance start: October 2020
 # Maintenance end: April 2022
-Version:	12.18.2
+Version:	12.18.3
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	9ad002a872543c606fad10370afda87c
+# Source0-md5:	28bf6a4d98b238403fa58a0805f4a979
 
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
