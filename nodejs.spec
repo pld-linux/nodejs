@@ -3,8 +3,9 @@
 #   /usr/share/doc/node/gdbinit
 
 # Conditional build:
+%bcond_without	system_brotli	# system brotli
 %bcond_without	system_uv	# system uv
-%bcond_with	http_parser	# use system http-parser and llhttp
+%bcond_with	http_parser	# system http-parser and llhttp
 
 # NOTES:
 # - https://nodejs.org/en/download/releases/
@@ -36,15 +37,16 @@ Patch3:		%{name}-lib64path.patch
 Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
 Patch5:		0002-Install-both-binaries-and-use-libdir.patch
 URL:		https://nodejs.org/
-BuildRequires:	c-ares-devel >= 1.14.0
+BuildRequires:	c-ares-devel >= 1.16.0
 BuildRequires:	gcc >= 6:4.8
 %if %{with http_parser}
 BuildRequires:	http-parser-devel >= 2.9.3
-BuildRequires:	llhttp-devel >= 2.0.1
+BuildRequires:	llhttp-devel >= 2.0.4
 %endif
+%{?with_shared_brotli:BuildRequires:	libbrotli-devel >= 1.0.7}
 BuildRequires:	libicu-devel >= 0.64
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.34.0}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.38.0}
 BuildRequires:	nghttp2-devel >= 1.41.0
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
@@ -54,11 +56,14 @@ BuildRequires:	python-modules >= 1:2.7
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
-BuildRequires:	zlib-devel
-%{?with_http_parser:Requires:	http-parser >= 2.9.3}
-%{?with_system_uv:Requires:	libuv >= 1.34.0}
-Requires:	nghttp2-libs >= 1.41.0
+BuildRequires:	zlib-devel >= 1.2.11
+Requires:	c-ares >= 1.16.0
 Requires:	ca-certificates
+%{?with_http_parser:Requires:	http-parser >= 2.9.3}
+%{?with_system_brotli:Requires:	libbrotli >= 1.0.7}
+%{?with_system_uv:Requires:	libuv >= 1.38.0}
+Requires:	nghttp2-libs >= 1.41.0
+Requires:	zlib >= 1.2.11
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
 Obsoletes:	nodejs-waf
@@ -93,9 +98,9 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
 %{?with_http_parser:Requires:	http-parser-devel >= 2.9.3}
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel >= 1.34.0}
+%{?with_system_uv:Requires:	libuv-devel >= 1.38.0}
 Requires:	openssl-devel
-Requires:	zlib-devel
+Requires:	zlib-devel >= 1.2.11
 
 %description devel
 Development headers for nodejs.
@@ -142,7 +147,6 @@ Sondy systemtap/dtrace dla Node.js.
 
 %prep
 %setup -q -n node-v%{version}
-#%patch1 -p1
 %if %{_lib} == "lib64"
 %patch3 -p1
 %else
@@ -172,6 +176,7 @@ GYP_DEFINES="soname_version=%{sover}" \
 	--libdir=%{_lib} \
 	--openssl-use-def-ca-store \
 	--shared \
+	%{?with_system_brotli:--shared-brotli} \
 	--shared-cares \
 	%{?with_http_parser:--shared-http-parser} \
 	%{?with_system_uv:--shared-libuv} \
