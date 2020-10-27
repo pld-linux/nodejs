@@ -15,20 +15,20 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	72
+%define		node_module_version	83
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 12.x LTS - https://github.com/nodejs/Release
-# Active start: 2019-10-21
+# 14.x LTS - https://github.com/nodejs/Release
+# Active start: 2020-10-27
 # Maintenance start: October 2020
-# Maintenance end: April 2022
-Version:	12.18.3
+# Maintenance end: April 2023
+Version:	14.15.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	28bf6a4d98b238403fa58a0805f4a979
+# Source0-md5:	a5cf57a18833bd122eca200a7d5e22d9
 
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -37,31 +37,30 @@ Patch3:		%{name}-lib64path.patch
 Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
 Patch5:		0002-Install-both-binaries-and-use-libdir.patch
 URL:		https://nodejs.org/
-BuildRequires:	c-ares-devel >= 1.16.0
-BuildRequires:	gcc >= 6:4.8
+BuildRequires:	c-ares-devel >= 1.16.1
+BuildRequires:	gcc >= 6:6.3
 %if %{with http_parser}
 BuildRequires:	http-parser-devel >= 2.9.3
-BuildRequires:	llhttp-devel >= 2.0.4
+BuildRequires:	llhttp-devel >= 2.1.3
 %endif
-%{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.7}
-BuildRequires:	libicu-devel >= 0.64
+%{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.9}
+BuildRequires:	libicu-devel >= 67
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.38.0}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.38.1}
 BuildRequires:	nghttp2-devel >= 1.41.0
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
-BuildRequires:	python >= 1:2.7
-BuildRequires:	python-jsmin
-BuildRequires:	python-modules >= 1:2.7
+BuildRequires:	python3
+BuildRequires:	python3-modules
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel >= 1.2.11
-Requires:	c-ares >= 1.16.0
+Requires:	c-ares >= 1.16.1
 Requires:	ca-certificates
 %{?with_http_parser:Requires:	http-parser >= 2.9.3}
-%{?with_system_brotli:Requires:	libbrotli >= 1.0.7}
-%{?with_system_uv:Requires:	libuv >= 1.38.0}
+%{?with_system_brotli:Requires:	libbrotli >= 1.0.9}
+%{?with_system_uv:Requires:	libuv >= 1.38.1}
 Requires:	nghttp2-libs >= 1.41.0
 Requires:	zlib >= 1.2.11
 Provides:	nodejs(engine) = %{version}
@@ -98,7 +97,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
 %{?with_http_parser:Requires:	http-parser-devel >= 2.9.3}
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel >= 1.38.0}
+%{?with_system_uv:Requires:	libuv-devel >= 1.38.1}
 Requires:	openssl-devel
 Requires:	zlib-devel >= 1.2.11
 
@@ -155,7 +154,7 @@ Sondy systemtap/dtrace dla Node.js.
 %patch4 -p1
 %patch5 -p1
 
-grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
+grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python3},'
 
 %{?with_system_brotli:%{__rm} -r deps/brotli}
 %{__rm} -r deps/cares
@@ -205,7 +204,7 @@ LDFLAGS="%{rpmldflags}" \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__python} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
+%{__python3} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
 
 ln -s libnode.so.%{node_module_version} $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
