@@ -157,8 +157,15 @@ Sondy systemtap/dtrace dla Node.js.
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python,#!%{__python},'
 
+%{?with_system_brotli:%{__rm} -r deps/brotli}
+%{__rm} -r deps/cares
+%if %{with http_parser}
+%{__rm} -r deps/http_parser
+%{__rm} -r deps/llhttp
+%endif
+%{__rm} -r deps/icu-small
+%{__rm} -r deps/nghttp2
 %{__rm} -r deps/npm
-%{?with_http_parser:%{__rm} -r deps/http_parser}
 %{__rm} -r deps/openssl
 %{?with_system_uv:%{__rm} -r deps/uv}
 %{__rm} -r deps/zlib
