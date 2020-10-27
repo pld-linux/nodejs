@@ -43,7 +43,7 @@ BuildRequires:	gcc >= 6:4.8
 BuildRequires:	http-parser-devel >= 2.9.3
 BuildRequires:	llhttp-devel >= 2.0.4
 %endif
-%{?with_shared_brotli:BuildRequires:	libbrotli-devel >= 1.0.7}
+%{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.7}
 BuildRequires:	libicu-devel >= 0.64
 BuildRequires:	libstdc++-devel >= 6:4.8
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.38.0}
