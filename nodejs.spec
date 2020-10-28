@@ -7,6 +7,8 @@
 %bcond_without	system_uv	# system uv
 %bcond_with	http_parser	# system http-parser and llhttp
 
+%define		_enable_debug_packages	0
+
 # NOTES:
 # - https://nodejs.org/en/download/releases/
 
