@@ -148,7 +148,7 @@ Sondy systemtap/dtrace dla Node.js.
 
 %prep
 %setup -q -n node-v%{version}
-%if %{_lib} == "lib64"
+%if "%{_lib}" == "lib64"
 %patch3 -p1
 %else
 %patch2 -p1
