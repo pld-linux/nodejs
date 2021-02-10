@@ -55,7 +55,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python3
 BuildRequires:	python3-modules
 BuildRequires:	rpm >= 4.4.9-56
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel >= 1.2.11
 Requires:	c-ares >= 1.16.1
@@ -114,9 +114,7 @@ Summary:	Documentation for Node.js engine
 Summary(pl.UTF-8):	Dokumentacja silnika Node.js
 Group:		Documentation
 URL:		https://nodejs.org/dist/v%{doc_ver}/docs/api
-%if "%{_rpmversion}" >= "4.6"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description doc
 Node.js is a server-side JavaScript environment that uses an
