@@ -25,12 +25,12 @@ Name:		nodejs
 # Active start: 2020-10-27
 # Maintenance start: October 2020
 # Maintenance end: April 2023
-Version:	14.15.4
+Version:	14.15.5
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	7dbe444e794f9ab8180575889496a1b2
+# Source0-md5:	12c059975256114cbe983292c20ae26a
 
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
