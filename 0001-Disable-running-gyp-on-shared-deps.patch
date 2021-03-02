@@ -12,7 +12,7 @@ index 0947300f24028d00bcfb79b38d96bded136228e3..5d4f88a705053fbdd6b56ec85e999767
 --- a/Makefile
 +++ b/Makefile
 @@ -141,9 +141,9 @@ test-code-cache: with-code-cache
- 	echo "'test-code-cache' target is a noop"
+ 	$(warning '$@' target is a noop)
  
  out/Makefile: config.gypi common.gypi node.gyp \
 -	deps/uv/uv.gyp deps/llhttp/llhttp.gyp deps/zlib/zlib.gyp \
@@ -30,8 +30,8 @@ index 0947300f24028d00bcfb79b38d96bded136228e3..5d4f88a705053fbdd6b56ec85e999767
 --- node-v12.16.1/deps/uvwasi/uvwasi.gyp.orig	2020-02-18 06:08:33.000000000 +0100
 +++ node-v12.16.1/deps/uvwasi/uvwasi.gyp	2020-03-21 17:51:55.372551818 +0100
 @@ -14,9 +14,6 @@
-         'src/uv_mapping.c',
-         'src/uvwasi.c',
+         'src/wasi_rights.c',
+         'src/wasi_serdes.c',
        ],
 -      'dependencies': [
 -        '../uv/uv.gyp:libuv',
