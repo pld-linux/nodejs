@@ -114,7 +114,7 @@ Summary:	Documentation for Node.js engine
 Summary(pl.UTF-8):	Dokumentacja silnika Node.js
 Group:		Documentation
 URL:		https://nodejs.org/dist/v%{doc_ver}/docs/api
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description doc
 Node.js is a server-side JavaScript environment that uses an
