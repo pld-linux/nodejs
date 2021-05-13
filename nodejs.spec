@@ -25,12 +25,12 @@ Name:		nodejs
 # Active start: 2020-10-27
 # Maintenance start: October 2020
 # Maintenance end: April 2023
-Version:	14.16.0
+Version:	14.17.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	7dc3666f407bf4e12a01ce1be2883d31
+# Source0-md5:	f9c3d013c4c1bf1f917ae624343c36d4
 
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -39,7 +39,7 @@ Patch3:		%{name}-lib64path.patch
 Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
 Patch5:		0002-Install-both-binaries-and-use-libdir.patch
 URL:		https://nodejs.org/
-BuildRequires:	c-ares-devel >= 1.16.1
+BuildRequires:	c-ares-devel >= 1.17.1
 BuildRequires:	gcc >= 6:6.3
 %if %{with http_parser}
 BuildRequires:	http-parser-devel >= 2.9.3
@@ -48,8 +48,8 @@ BuildRequires:	llhttp-devel >= 2.1.3
 %{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.9}
 BuildRequires:	libicu-devel >= 67
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.38.1}
-BuildRequires:	nghttp2-devel >= 1.41.0
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.41.0}
+BuildRequires:	nghttp2-devel >= 1.42.0
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
 BuildRequires:	python3
@@ -58,12 +58,12 @@ BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel >= 1.2.11
-Requires:	c-ares >= 1.16.1
+Requires:	c-ares >= 1.17.1
 Requires:	ca-certificates
 %{?with_http_parser:Requires:	http-parser >= 2.9.3}
 %{?with_system_brotli:Requires:	libbrotli >= 1.0.9}
-%{?with_system_uv:Requires:	libuv >= 1.38.1}
-Requires:	nghttp2-libs >= 1.41.0
+%{?with_system_uv:Requires:	libuv >= 1.41.0}
+Requires:	nghttp2-libs >= 1.42.0
 Requires:	zlib >= 1.2.11
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
@@ -99,7 +99,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
 %{?with_http_parser:Requires:	http-parser-devel >= 2.9.3}
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel >= 1.38.1}
+%{?with_system_uv:Requires:	libuv-devel >= 1.41.0}
 Requires:	openssl-devel
 Requires:	zlib-devel >= 1.2.11
 
