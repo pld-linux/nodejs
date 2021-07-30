@@ -26,7 +26,7 @@ Name:		nodejs
 # Maintenance start: October 2020
 # Maintenance end: April 2023
 Version:	14.17.4
-Release:	1
+Release:	2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz

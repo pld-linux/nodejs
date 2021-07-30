@@ -8,4 +8,4 @@
 +  let paths = ["/usr/lib/node", "/usr/lib/node_modules", path.resolve(prefixDir, 'lib', 'node')];
  
    if (homeDir) {
-     paths.unshift(path.resolve(homeDir, '.node_libraries'));
+     ArrayPrototypeUnshift(paths, path.resolve(homeDir, '.node_libraries'));
