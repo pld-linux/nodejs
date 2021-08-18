@@ -25,13 +25,13 @@ Name:		nodejs
 # Active start: 2020-10-27
 # Maintenance start: October 2020
 # Maintenance end: April 2023
-Version:	14.17.4
-Release:	3
+Version:	14.17.5
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	d46ffad24b7637bdd47995a799bcec7d
-
+# Source0-md5:	1e42a4be9a1983f60d97038435b010ce
+Patch0:		system_cares.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
@@ -39,7 +39,7 @@ Patch3:		%{name}-lib64path.patch
 Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
 Patch5:		0002-Install-both-binaries-and-use-libdir.patch
 URL:		https://nodejs.org/
-BuildRequires:	c-ares-devel >= 1.17.1
+BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
 %if %{with http_parser}
 BuildRequires:	http-parser-devel >= 2.9.3
@@ -146,6 +146,7 @@ Sondy systemtap/dtrace dla Node.js.
 
 %prep
 %setup -q -n node-v%{version}
+%patch0 -p1
 %if "%{_lib}" == "lib64"
 %patch3 -p1
 %else
