@@ -45,6 +45,9 @@ BuildRequires:	gcc >= 6:6.3
 BuildRequires:	http-parser-devel >= 2.9.3
 BuildRequires:	llhttp-devel >= 2.1.3
 %endif
+%ifarch mips mipsel mips64 mips64el ppc %{arm}
+BuildRequires:	libatomic-devel
+%endif
 %{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.9}
 BuildRequires:	libicu-devel >= 67
 BuildRequires:	libstdc++-devel >= 6:4.8
