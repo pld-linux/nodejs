@@ -17,7 +17,7 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	83
+%define		node_module_version	93
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
@@ -25,12 +25,12 @@ Name:		nodejs
 # Active start: 2020-10-27
 # Maintenance start: October 2020
 # Maintenance end: April 2023
-Version:	14.17.5
+Version:	16.10.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	1e42a4be9a1983f60d97038435b010ce
+# Source0-md5:	8c5f13de865ad83d4d759414fe12e261
 Patch0:		system_cares.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
@@ -49,14 +49,14 @@ BuildRequires:	llhttp-devel >= 2.1.3
 BuildRequires:	libatomic-devel
 %endif
 %{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.9}
-BuildRequires:	libicu-devel >= 67
+BuildRequires:	libicu-devel >= 69.1
 BuildRequires:	libstdc++-devel >= 6:4.8
-%{?with_system_uv:BuildRequires:	libuv-devel >= 1.41.0}
+%{?with_system_uv:BuildRequires:	libuv-devel >= 1.42.0}
 BuildRequires:	nghttp2-devel >= 1.42.0
 BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pkgconfig
-BuildRequires:	python3
-BuildRequires:	python3-modules
+BuildRequires:	python3 >= 1:3.6
+BuildRequires:	python3-modules >= 1:3.6
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
@@ -65,7 +65,7 @@ Requires:	c-ares >= 1.17.1
 Requires:	ca-certificates
 %{?with_http_parser:Requires:	http-parser >= 2.9.3}
 %{?with_system_brotli:Requires:	libbrotli >= 1.0.9}
-%{?with_system_uv:Requires:	libuv >= 1.41.0}
+%{?with_system_uv:Requires:	libuv >= 1.42.0}
 Requires:	nghttp2-libs >= 1.42.0
 Requires:	zlib >= 1.2.11
 Provides:	nodejs(engine) = %{version}
@@ -102,7 +102,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	gcc
 %{?with_http_parser:Requires:	http-parser-devel >= 2.9.3}
 Requires:	libstdc++-devel
-%{?with_system_uv:Requires:	libuv-devel >= 1.41.0}
+%{?with_system_uv:Requires:	libuv-devel >= 1.42.0}
 Requires:	openssl-devel
 Requires:	zlib-devel >= 1.2.11
 

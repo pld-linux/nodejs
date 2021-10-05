@@ -4,8 +4,8 @@
      path.resolve(process.execPath, '..') :
      path.resolve(process.execPath, '..', '..');
  
--  let paths = [path.resolve(prefixDir, 'lib', 'node')];
-+  let paths = ["/usr/lib/node", "/usr/lib/node_modules", path.resolve(prefixDir, 'lib', 'node')];
+-  const paths = [path.resolve(prefixDir, 'lib', 'node')];
++  const paths = ["/usr/lib/node", "/usr/lib/node_modules", path.resolve(prefixDir, 'lib', 'node')];
  
    if (homeDir) {
      ArrayPrototypeUnshift(paths, path.resolve(homeDir, '.node_libraries'));
