@@ -1,3 +1,7 @@
+# BUILD NOTE:
+# until we get binutils with https://sourceware.org/bugzilla/show_bug.cgi?id=28138 fixed
+# build requires >1024 available file descriptors (4096 seems sufficient)
+#
 # TODO
 # - unpackaged files
 #   /usr/share/doc/node/gdbinit
