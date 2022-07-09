@@ -29,12 +29,12 @@ Name:		nodejs
 # Active start: 2020-10-27
 # Maintenance start: October 2020
 # Maintenance end: April 2023
-Version:	16.15.0
-Release:	2
+Version:	16.16.0
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	1be414cdf553b0772e1048e03ffa741b
+# Source0-md5:	987d57f2a6be10f61a8cd9907b585050
 Patch0:		system_cares.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
