@@ -1,0 +1,41 @@
+From c2792e58035fcbaa16d0cb70998852fbeb5df4cc Mon Sep 17 00:00:00 2001
+From: WANG Xuerui <git@xen0n.name>
+Date: Fri, 07 Oct 2022 00:23:49 +0800
+Subject: [PATCH] [base] Fix build with gcc-13
+
+See https://gcc.gnu.org/gcc-13/porting_to.html#header-dep-changes.
+
+Also see Gentoo Linux bug report: https://bugs.gentoo.org/865981
+
+Change-Id: I421f396b02ba37e12ee70048ee33e034f8113566
+Reviewed-on: https://chromium-review.googlesource.com/c/v8/v8/+/3934140
+Reviewed-by: Clemens Backes <clemensb@chromium.org>
+Reviewed-by: Simon Zünd <szuend@chromium.org>
+Commit-Queue: Clemens Backes <clemensb@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#83587}
+---
+
+diff --git a/src/base/logging.h b/src/base/logging.h
+index 08db24a..38be165 100644
+--- a/src/base/logging.h
++++ b/src/base/logging.h
+@@ -5,6 +5,7 @@
+ #ifndef V8_BASE_LOGGING_H_
+ #define V8_BASE_LOGGING_H_
+ 
++#include <cstdint>
+ #include <cstring>
+ #include <sstream>
+ #include <string>
+diff --git a/src/inspector/v8-string-conversions.h b/src/inspector/v8-string-conversions.h
+index c1d69c1..eb33c68 100644
+--- a/src/inspector/v8-string-conversions.h
++++ b/src/inspector/v8-string-conversions.h
+@@ -5,6 +5,7 @@
+ #ifndef V8_INSPECTOR_V8_STRING_CONVERSIONS_H_
+ #define V8_INSPECTOR_V8_STRING_CONVERSIONS_H_
+ 
++#include <cstdint>
+ #include <string>
+ 
+ // Conversion routines between UT8 and UTF16, used by string-16.{h,cc}. You may

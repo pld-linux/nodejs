@@ -42,6 +42,7 @@ Patch2:		%{name}-libpath.patch
 Patch3:		%{name}-lib64path.patch
 Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
 Patch5:		0002-Install-both-binaries-and-use-libdir.patch
+Patch6:		gcc13.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
@@ -162,6 +163,7 @@ Sondy systemtap/dtrace dla Node.js.
 %endif
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1 -d deps/v8
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 
