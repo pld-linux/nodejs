@@ -30,7 +30,7 @@ Name:		nodejs
 # Maintenance start: October 2020
 # Maintenance end: April 2023
 Version:	16.16.0
-Release:	2
+Release:	3
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
