@@ -25,24 +25,22 @@
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 14.x LTS - https://github.com/nodejs/Release
-# Active start: 2020-10-27
-# Maintenance start: October 2020
-# Maintenance end: April 2023
-Version:	16.16.0
-Release:	3
+# 16.x LTS - https://github.com/nodejs/Release
+# Active start: 2021-10-26
+# Maintenance start: October 2022
+# Maintenance end: September 2023
+Version:	16.20.1
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
-Source0:	https://nodejs.org/dist/v%{version}/node-v%{version}.tar.gz
-# Source0-md5:	987d57f2a6be10f61a8cd9907b585050
+Source0:	https://nodejs.org/download/release/latest-v16.x/node-v%{version}.tar.xz
+# Source0-md5:	0eb71fbf3fcf35c9ed479f10c55eedad
 Patch0:		system_cares.patch
 # force node to use /usr/lib/node as the systemwide module directory
 Patch2:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch3:		%{name}-lib64path.patch
 Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
-Patch5:		0002-Install-both-binaries-and-use-libdir.patch
-Patch6:		gcc13.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
@@ -76,7 +74,7 @@ Requires:	nghttp2-libs >= 1.42.0
 Requires:	zlib >= 1.2.11
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
-Obsoletes:	nodejs-waf
+Obsoletes:	nodejs-waf < 0.9
 ExclusiveArch:	%{ix86} %{x8664} %{arm} aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -162,8 +160,6 @@ Sondy systemtap/dtrace dla Node.js.
 %patch2 -p1
 %endif
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1 -d deps/v8
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 
