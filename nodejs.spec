@@ -63,7 +63,9 @@ BuildRequires:	python3-modules >= 1:3.6
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.752
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	sed >= 4.0
+BuildRequires:	xz
 BuildRequires:	zlib-devel >= 1.2.11
 Requires:	c-ares >= 1.17.1
 Requires:	ca-certificates
