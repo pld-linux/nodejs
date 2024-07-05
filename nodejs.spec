@@ -21,26 +21,25 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	93
+%define		node_module_version	127
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 16.x LTS - https://github.com/nodejs/Release
-# Active start: 2021-10-26
-# Maintenance start: October 2022
-# Maintenance end: September 2023
-Version:	16.20.2
+# 22.x LTS - https://github.com/nodejs/Release
+# Active start: 2024-10-29
+# Maintenance start: October 2025
+# Maintenance end: April 2027
+Version:	22.4.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
-Source0:	https://nodejs.org/download/release/latest-v16.x/node-v%{version}.tar.xz
-# Source0-md5:	c3bdaf2ababf0c753d42c0acef1a154a
-Patch0:		system_cares.patch
+Source0:	https://nodejs.org/download/release/latest-v22.x/node-v%{version}.tar.xz
+# Source0-md5:	ee38b5abd5541b48ed9b80981ba4b7ea
 # force node to use /usr/lib/node as the systemwide module directory
-Patch2:		%{name}-libpath.patch
+Patch0:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
-Patch3:		%{name}-lib64path.patch
-Patch4:		0001-Disable-running-gyp-on-shared-deps.patch
+Patch1:		%{name}-lib64path.patch
+Patch2:		0001-Remove-unused-OpenSSL-config.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
@@ -77,6 +76,7 @@ Requires:	zlib >= 1.2.11
 Provides:	nodejs(engine) = %{version}
 Provides:	nodejs(module-version) = %{node_module_version}
 Obsoletes:	nodejs-waf < 0.9
+Obsoletes:	systemtap-nodejs < 22.4.0
 ExclusiveArch:	%{ix86} %{x8664} %{arm} aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -155,13 +155,12 @@ Sondy systemtap/dtrace dla Node.js.
 
 %prep
 %setup -q -n node-v%{version}
-%patch0 -p1
 %if "%{_lib}" == "lib64"
-%patch3 -p1
+%patch1 -p1
 %else
-%patch2 -p1
+%patch0 -p1
 %endif
-%patch4 -p1
+%patch2 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 
@@ -179,7 +178,7 @@ grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__
 %{__rm} -r deps/zlib
 
 %build
-ver=$(awk '/#define NODE_MODULE_VERSION/{print $3}' src/node_version.h)
+ver=$(awk '/#define NODE_MODULE_VERSION [0-9]+/{print $3}' src/node_version.h)
 test "$ver" = "%{node_module_version}"
 
 # CC used only to detect if CC is clang, not used for compiling
@@ -200,7 +199,6 @@ GYP_DEFINES="soname_version=%{sover}" \
 	--shared-zlib \
 	--with-intl=system-icu \
 	--without-corepack \
-	--without-dtrace \
 	--without-npm
 
 # add LFS defines from libuv (RHBZ#892601)
@@ -215,7 +213,7 @@ PATH="$(pwd)/out/tools/bin:$PATH" \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__python3} tools/install.py install "$RPM_BUILD_ROOT" "%{_prefix}"
+%{__python3} tools/install.py --dest-dir "$RPM_BUILD_ROOT" --prefix "%{_prefix}" install
 
 ln -s libnode.so.%{node_module_version} $RPM_BUILD_ROOT%{_libdir}/libnode.so
 
@@ -266,7 +264,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS CHANGELOG.md LICENSE README.md SECURITY.md
+%doc CHANGELOG.md LICENSE GOVERNANCE.md README.md SECURITY.md
 %attr(755,root,root) %{_bindir}/node
 %attr(755,root,root) %{_bindir}/nodejs
 %attr(755,root,root) %{_libdir}/libnode.so.%{node_module_version}
@@ -288,7 +286,3 @@ rm -rf $RPM_BUILD_ROOT
 %files doc
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-doc-%{version}
-
-%files -n systemtap-nodejs
-%defattr(644,root,root,755)
-%{_datadir}/systemtap/tapset/node.stp
