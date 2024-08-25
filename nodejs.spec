@@ -140,19 +140,6 @@ sieciowych.
 
 Ten pakiet zawiera dokumentację Node.js.
 
-%package -n systemtap-nodejs
-Summary:	systemtap/dtrace probes for Node.js
-Summary(pl.UTF-8):	Sondy systemtap/dtrace dla Node.js
-Group:		Development/Tools
-Requires:	%{name} = %{version}-%{release}
-Requires:	systemtap-client
-
-%description -n systemtap-nodejs
-systemtap/dtrace probes for Node.js.
-
-%description -n systemtap-nodejs -l pl.UTF-8
-Sondy systemtap/dtrace dla Node.js.
-
 %prep
 %setup -q -n node-v%{version}
 %if "%{_lib}" == "lib64"
