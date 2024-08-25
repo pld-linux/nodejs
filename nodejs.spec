@@ -40,6 +40,7 @@ Patch0:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
 Patch1:		%{name}-lib64path.patch
 Patch2:		0001-Remove-unused-OpenSSL-config.patch
+Patch3:		arm-yield.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
@@ -148,6 +149,7 @@ Ten pakiet zawiera dokumentację Node.js.
 %patch0 -p1
 %endif
 %patch2 -p1
+%patch3 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 
