@@ -144,12 +144,12 @@ Ten pakiet zawiera dokumentację Node.js.
 %prep
 %setup -q -n node-v%{version}
 %if "%{_lib}" == "lib64"
-%patch1 -p1
+%patch -P1 -p1
 %else
-%patch0 -p1
+%patch -P0 -p1
 %endif
-%patch2 -p1
-%patch3 -p1
+%patch -P2 -p1
+%patch -P3 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 
