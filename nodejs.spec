@@ -30,7 +30,7 @@ Name:		nodejs
 # Maintenance start: October 2025
 # Maintenance end: April 2027
 Version:	22.13.0
-Release:	1
+Release:	2
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/download/release/latest-v22.x/node-v%{version}.tar.xz
