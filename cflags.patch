@@ -1,0 +1,146 @@
+--- node-v22.13.0/common.gypi~	2025-01-06 22:51:43.000000000 +0100
++++ node-v22.13.0/common.gypi	2025-02-11 10:25:38.183327319 +0100
+@@ -191,7 +191,7 @@
+             }],
+           ],
+         },
+-        'cflags': [ '-O3' ],
++        'cflags': [],
+         'conditions': [
+           ['enable_lto=="true"', {
+             'cflags': ['<(lto)'],
+@@ -506,54 +506,6 @@
+             'cflags': [ '-I/usr/local/include' ],
+             'ldflags': [ '-Wl,-z,wxneeded' ],
+           }],
+-          ['_toolset=="host"', {
+-            'conditions': [
+-              [ 'host_arch=="ia32"', {
+-                'cflags': [ '-m32' ],
+-                'ldflags': [ '-m32' ],
+-              }],
+-              [ 'host_arch=="x64"', {
+-                'cflags': [ '-m64' ],
+-                'ldflags': [ '-m64' ],
+-              }],
+-              [ 'host_arch=="ppc" and OS not in "aix os400"', {
+-                'cflags': [ '-m32' ],
+-                'ldflags': [ '-m32' ],
+-              }],
+-              [ 'host_arch=="ppc64" and OS not in "aix os400"', {
+-                'cflags': [ '-m64', '-mminimal-toc' ],
+-                'ldflags': [ '-m64' ],
+-              }],
+-              [ 'host_arch=="s390x" and OS=="linux"', {
+-                'cflags': [ '-m64', '-march=z196' ],
+-                'ldflags': [ '-m64', '-march=z196' ],
+-              }],
+-            ],
+-          }],
+-          ['_toolset=="target"', {
+-            'conditions': [
+-              [ 'target_arch=="ia32"', {
+-                'cflags': [ '-m32' ],
+-                'ldflags': [ '-m32' ],
+-              }],
+-              [ 'target_arch=="x64"', {
+-                'cflags': [ '-m64' ],
+-                'ldflags': [ '-m64' ],
+-              }],
+-              [ 'target_arch=="ppc" and OS not in "aix os400"', {
+-                'cflags': [ '-m32' ],
+-                'ldflags': [ '-m32' ],
+-              }],
+-              [ 'target_arch=="ppc64" and OS not in "aix os400"', {
+-                'cflags': [ '-m64', '-mminimal-toc' ],
+-                'ldflags': [ '-m64' ],
+-              }],
+-              [ 'target_arch=="s390x" and OS=="linux"', {
+-                'cflags': [ '-m64', '-march=z196' ],
+-                'ldflags': [ '-m64', '-march=z196' ],
+-              }],
+-            ],
+-          }],
+         ],
+         'conditions': [
+           [ 'OS=="solaris"', {
+--- node-v22.13.0/tools/gyp/pylib/gyp/generator/ninja.py~	2025-01-06 22:51:52.000000000 +0100
++++ node-v22.13.0/tools/gyp/pylib/gyp/generator/ninja.py	2025-02-11 10:27:01.979993961 +0100
+@@ -2331,9 +2331,6 @@
+             command = CommandWithWrapper(
+                 "CC", wrappers, QuoteShellArgument(path, "win")
+             )
+-            if clang_cl:
+-                # Use clang-cl to cross-compile for x86 or x86_64.
+-                command += " -m32" if arch == "x86" else " -m64"
+             master_ninja.variable("cl_" + arch, command)
+ 
+     cc = GetEnvironFallback(["CC_target", "CC"], cc)
+--- node-v22.13.0/tools/v8_gypfiles/toolchain.gypi~	2025-01-06 22:51:52.000000000 +0100
++++ node-v22.13.0/tools/v8_gypfiles/toolchain.gypi	2025-02-11 10:30:08.699993924 +0100
+@@ -607,65 +607,17 @@
+          v8_target_arch=="ppc")', {
+         'target_conditions': [
+           ['_toolset=="host"', {
+-            'conditions': [
+-              ['host_cxx_is_biarch==1', {
+-                'conditions': [
+-                  ['host_arch=="s390x"', {
+-                    'cflags': [ '-m31' ],
+-                    'ldflags': [ '-m31' ]
+-                  },{
+-                   'cflags': [ '-m32' ],
+-                   'ldflags': [ '-m32' ]
+-                  }],
+-                ],
+-              }],
+-            ],
+             'xcode_settings': {
+               'ARCHS': [ 'i386' ],
+             },
+           }],
+           ['_toolset=="target"', {
+-            'conditions': [
+-              ['target_cxx_is_biarch==1', {
+-                'conditions': [
+-                  ['host_arch=="s390x"', {
+-                    'cflags': [ '-m31' ],
+-                    'ldflags': [ '-m31' ]
+-                  },{
+-                   'cflags': [ '-m32' ],
+-                   'ldflags': [ '-m32' ],
+-                  }],
+-                ],
+-              }],
+-            ],
+             'xcode_settings': {
+               'ARCHS': [ 'i386' ],
+             },
+           }],
+         ],
+       }],
+-      ['(OS=="linux" or OS=="android") and \
+-        (v8_target_arch=="x64" or v8_target_arch=="arm64" or \
+-         v8_target_arch=="ppc64" or v8_target_arch=="s390x")', {
+-        'target_conditions': [
+-          ['_toolset=="host"', {
+-            'conditions': [
+-              ['host_cxx_is_biarch==1', {
+-                'cflags': [ '-m64' ],
+-                'ldflags': [ '-m64' ]
+-              }],
+-             ],
+-           }],
+-          ['_toolset=="target"', {
+-             'conditions': [
+-               ['target_cxx_is_biarch==1', {
+-                 'cflags': [ '-m64' ],
+-                 'ldflags': [ '-m64' ],
+-               }],
+-             ]
+-           }],
+-         ],
+-      }],
+       ['OS=="android" and v8_android_log_stdout==1', {
+         'defines': [
+           'V8_ANDROID_LOG_STDOUT',
