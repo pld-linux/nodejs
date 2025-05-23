@@ -29,12 +29,12 @@ Name:		nodejs
 # Active start: 2024-10-29
 # Maintenance start: October 2025
 # Maintenance end: April 2027
-Version:	22.15.1
+Version:	22.16.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/download/release/latest-v22.x/node-v%{version}.tar.xz
-# Source0-md5:	5bfea4efe741bd702917223c44e2c91c
+# Source0-md5:	1cdda792df1557081123928c40bc4e8c
 # force node to use /usr/lib/node as the systemwide module directory
 Patch0:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
