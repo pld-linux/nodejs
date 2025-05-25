@@ -30,7 +30,8 @@ Name:		nodejs
 # Maintenance start: October 2025
 # Maintenance end: April 2027
 Version:	22.16.0
-Release:	1
+# FIXME: with 22.16.0 yarn (1.22.10 and 1.22.22 tested) hangs during python3-furo build; nodejs 22.15.1 works
+Release:	0.1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/download/release/latest-v22.x/node-v%{version}.tar.xz
