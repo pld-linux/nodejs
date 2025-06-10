@@ -71,6 +71,9 @@ BuildRequires:	xz
 BuildRequires:	zlib-devel >= 1.2.11
 Requires:	c-ares >= 1.17.1
 Requires:	ca-certificates
+%ifarch %{ix86}
+Requires:	cpuinfo(sse2)
+%endif
 %{?with_http_parser:Requires:	http-parser >= 2.9.3}
 %{?with_system_brotli:Requires:	libbrotli >= 1.0.9}
 %{?with_system_uv:Requires:	libuv >= 1.42.0}
