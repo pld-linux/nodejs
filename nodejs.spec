@@ -30,8 +30,7 @@ Name:		nodejs
 # Maintenance start: October 2025
 # Maintenance end: April 2027
 Version:	22.16.0
-# FIXME: with 22.16.0 yarn (1.22.10 and 1.22.22 tested) hangs during python3-furo build; nodejs 22.15.1 works
-Release:	0.1
+Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/download/release/latest-v22.x/node-v%{version}.tar.xz
@@ -43,6 +42,7 @@ Patch1:		%{name}-lib64path.patch
 Patch2:		0001-Remove-unused-OpenSSL-config.patch
 Patch3:		arm-yield.patch
 Patch4:		cflags.patch
+Patch5:		abseil-flags.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
@@ -156,6 +156,7 @@ Ten pakiet zawiera dokumentację Node.js.
 %patch -P2 -p1
 %patch -P3 -p1
 %patch -P4 -p1
+%patch -P5 -p1
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 

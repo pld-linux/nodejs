@@ -1,0 +1,52 @@
+From 4c80ac0194c24d6bc75cb61052529cf9aff1d409 Mon Sep 17 00:00:00 2001
+From: Chengzhong Wu <cwu631@bloomberg.net>
+Date: Wed, 11 Jun 2025 15:04:21 +0100
+Subject: [PATCH] tools: include toolchain.gypi in abseil.gyp
+
+This sets proper SIMD build flags for abseil on ia32.
+---
+ tools/v8_gypfiles/abseil.gyp     | 1 +
+ tools/v8_gypfiles/toolchain.gypi | 4 ----
+ tools/v8_gypfiles/v8.gyp         | 4 ++++
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/tools/v8_gypfiles/abseil.gyp b/tools/v8_gypfiles/abseil.gyp
+index 2f71382d04fe52..ec5e1aea029ec2 100644
+--- a/tools/v8_gypfiles/abseil.gyp
++++ b/tools/v8_gypfiles/abseil.gyp
+@@ -1,4 +1,5 @@
+ {
++  'includes': ['toolchain.gypi', 'features.gypi'],
+   'targets': [
+     {
+       'target_name': 'abseil',
+diff --git a/tools/v8_gypfiles/toolchain.gypi b/tools/v8_gypfiles/toolchain.gypi
+index a3462d2bb33e1a..794c01a5f089c2 100644
+--- a/tools/v8_gypfiles/toolchain.gypi
++++ b/tools/v8_gypfiles/toolchain.gypi
+@@ -98,10 +98,6 @@
+     }],
+   ],
+   'target_defaults': {
+-    'include_dirs': [
+-      '<(V8_ROOT)',
+-      '<(V8_ROOT)/include',
+-    ],
+     'cflags!': ['-Wall', '-Wextra'],
+     'conditions': [
+       ['clang==0 and OS!="win"', {
+diff --git a/tools/v8_gypfiles/v8.gyp b/tools/v8_gypfiles/v8.gyp
+index 3ea5564d5463a2..4134ef5c1810f3 100644
+--- a/tools/v8_gypfiles/v8.gyp
++++ b/tools/v8_gypfiles/v8.gyp
+@@ -36,6 +36,10 @@
+   },
+   'includes': ['toolchain.gypi', 'features.gypi'],
+   'target_defaults': {
++    'include_dirs': [
++      '<(V8_ROOT)',
++      '<(V8_ROOT)/include',
++    ],
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'AdditionalOptions': ['/utf-8']
