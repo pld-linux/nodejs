@@ -64,7 +64,7 @@ BuildRequires:	python3 >= 1:3.6
 BuildRequires:	python3-modules >= 1:3.6
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 1.752
+BuildRequires:	rpmbuild(macros) >= 2.007
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	sed >= 4.0
 BuildRequires:	xz
@@ -195,7 +195,10 @@ GYP_DEFINES="soname_version=%{sover}" \
 	--shared-zlib \
 	--with-intl=system-icu \
 	--without-corepack \
-	--without-npm
+	--without-npm \
+%ifarch %{arm_with_neon}
+	--with-arm-fpu=neon
+%endif
 
 # add LFS defines from libuv (RHBZ#892601)
 # CXXFLAGS must be exported, as it is needed for make, not gyp
