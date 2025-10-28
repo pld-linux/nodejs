@@ -9,7 +9,7 @@
          'conditions': [
            ['enable_lto=="true"', {
              'cflags': ['<(lto)'],
-@@ -506,64 +506,6 @@
+@@ -506,56 +506,6 @@
              'cflags': [ '-I/usr/local/include' ],
              'ldflags': [ '-Wl,-z,wxneeded' ],
            }],
@@ -22,10 +22,6 @@
 -              [ 'host_arch=="x64"', {
 -                'cflags': [ '-m64' ],
 -                'ldflags': [ '-m64' ],
--              }],
--              [ 'host_arch=="ppc" and OS not in "aix os400"', {
--                'cflags': [ '-m32' ],
--                'ldflags': [ '-m32' ],
 -              }],
 -              [ 'host_arch=="ppc64" and OS not in "aix os400"', {
 -                'conditions': [
@@ -51,10 +47,6 @@
 -              [ 'target_arch=="x64"', {
 -                'cflags': [ '-m64' ],
 -                'ldflags': [ '-m64' ],
--              }],
--              [ 'target_arch=="ppc" and OS not in "aix os400"', {
--                'cflags': [ '-m32' ],
--                'ldflags': [ '-m32' ],
 -              }],
 -              [ 'target_arch=="ppc64" and OS not in "aix os400"', {
 -                'conditions': [
@@ -86,71 +78,3 @@
              master_ninja.variable("cl_" + arch, command)
  
      cc = GetEnvironFallback(["CC_target", "CC"], cc)
---- node-v22.13.0/tools/v8_gypfiles/toolchain.gypi~	2025-01-06 22:51:52.000000000 +0100
-+++ node-v22.13.0/tools/v8_gypfiles/toolchain.gypi	2025-02-11 10:30:08.699993924 +0100
-@@ -607,65 +607,17 @@
-          v8_target_arch=="ppc")', {
-         'target_conditions': [
-           ['_toolset=="host"', {
--            'conditions': [
--              ['host_cxx_is_biarch==1', {
--                'conditions': [
--                  ['host_arch=="s390x"', {
--                    'cflags': [ '-m31' ],
--                    'ldflags': [ '-m31' ]
--                  },{
--                   'cflags': [ '-m32' ],
--                   'ldflags': [ '-m32' ]
--                  }],
--                ],
--              }],
--            ],
-             'xcode_settings': {
-               'ARCHS': [ 'i386' ],
-             },
-           }],
-           ['_toolset=="target"', {
--            'conditions': [
--              ['target_cxx_is_biarch==1', {
--                'conditions': [
--                  ['host_arch=="s390x"', {
--                    'cflags': [ '-m31' ],
--                    'ldflags': [ '-m31' ]
--                  },{
--                   'cflags': [ '-m32' ],
--                   'ldflags': [ '-m32' ],
--                  }],
--                ],
--              }],
--            ],
-             'xcode_settings': {
-               'ARCHS': [ 'i386' ],
-             },
-           }],
-         ],
-       }],
--      ['(OS=="linux" or OS=="android") and \
--        (v8_target_arch=="x64" or v8_target_arch=="arm64" or \
--         v8_target_arch=="ppc64" or v8_target_arch=="s390x")', {
--        'target_conditions': [
--          ['_toolset=="host"', {
--            'conditions': [
--              ['host_cxx_is_biarch==1', {
--                'cflags': [ '-m64' ],
--                'ldflags': [ '-m64' ]
--              }],
--             ],
--           }],
--          ['_toolset=="target"', {
--             'conditions': [
--               ['target_cxx_is_biarch==1', {
--                 'cflags': [ '-m64' ],
--                 'ldflags': [ '-m64' ],
--               }],
--             ]
--           }],
--         ],
--      }],
-       ['OS=="android" and v8_android_log_stdout==1', {
-         'defines': [
-           'V8_ANDROID_LOG_STDOUT',

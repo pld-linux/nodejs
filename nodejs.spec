@@ -21,20 +21,20 @@
 # add-on binaries can be loaded in to without needing to be re-compiled. It
 # used to be stored as hex value in earlier versions, but is now represented as
 # an integer.
-%define		node_module_version	127
+%define		node_module_version	137
 Summary:	Asynchronous JavaScript Engine
 Summary(pl.UTF-8):	Asynchroniczny silnik JavaScriptu
 Name:		nodejs
-# 22.x LTS - https://github.com/nodejs/Release
-# Active start: 2024-10-29
-# Maintenance start: October 2025
-# Maintenance end: April 2027
-Version:	22.21.0
+# 24.x LTS - https://github.com/nodejs/Release
+# Active start: 2025-10-28
+# Maintenance start: October 2026
+# Maintenance end: April 2028
+Version:	24.11.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
-Source0:	https://nodejs.org/download/release/latest-v22.x/node-v%{version}.tar.xz
-# Source0-md5:	e8b34bf2642250797ac3fe94669751c2
+Source0:	https://nodejs.org/download/release/latest-v24.x/node-v%{version}.tar.xz
+# Source0-md5:	3c73adcfd19541813ca8249c9eccf9c2
 # force node to use /usr/lib/node as the systemwide module directory
 Patch0:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
