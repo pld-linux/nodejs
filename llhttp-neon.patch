@@ -1,0 +1,32 @@
+--- node-v24.11.0/deps/llhttp/src/llhttp.c.orig	2025-10-28 06:48:10.000000000 +0100
++++ node-v24.11.0/deps/llhttp/src/llhttp.c	2025-10-28 23:17:38.577808680 +0100
+@@ -2639,17 +2639,17 @@
+         /* Find first character that does not match `ranges` */
+         single = vceqq_u8(input, vdupq_n_u8(0x9));
+         mask = single;
+-        single = vandq_u16(
++        single = vandq_u8(
+           vcgeq_u8(input, vdupq_n_u8(' ')),
+           vcleq_u8(input, vdupq_n_u8('~'))
+         );
+-        mask = vorrq_u16(mask, single);
+-        single = vandq_u16(
++        mask = vorrq_u8(mask, single);
++        single = vandq_u8(
+           vcgeq_u8(input, vdupq_n_u8(0x80)),
+           vcleq_u8(input, vdupq_n_u8(0xff))
+         );
+-        mask = vorrq_u16(mask, single);
+-        narrow = vshrn_n_u16(mask, 4);
++        mask = vorrq_u8(mask, single);
++        narrow = vshrn_n_u16(vreinterpretq_u16_u8(mask), 4);
+         match_mask = ~vget_lane_u64(vreinterpret_u64_u8(narrow), 0);
+         match_len = __builtin_ctzll(match_mask) >> 2;
+         if (match_len != 16) {
+@@ -10096,4 +10096,4 @@
+   }
+   
+   return 0;
+-}
+\ No newline at end of file
++}
