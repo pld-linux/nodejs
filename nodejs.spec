@@ -43,6 +43,7 @@ Patch2:		0001-Remove-unused-OpenSSL-config.patch
 Patch3:		arm-yield.patch
 Patch4:		cflags.patch
 Patch5:		llhttp-neon.patch
+Patch6:		tuple-build-fix.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
 BuildRequires:	gcc >= 6:6.3
@@ -157,6 +158,7 @@ Ten pakiet zawiera dokumentację Node.js.
 %patch -P3 -p1
 %patch -P4 -p1
 %patch -P5 -p1
+%patch -P6 -p1 -d deps/v8
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
 
