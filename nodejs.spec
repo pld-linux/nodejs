@@ -66,10 +66,13 @@ BuildRequires:	python3-modules >= 1:3.6
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.007
-BuildRequires:	tar >= 1:1.22
 BuildRequires:	sed >= 4.0
+BuildRequires:	simdjson-devel
+BuildRequires:	sqlite3-devel
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 BuildRequires:	zlib-devel >= 1.2.11
+BuildRequires:	zstd-devel
 Requires:	c-ares >= 1.17.1
 Requires:	ca-certificates
 %ifarch %{ix86}
@@ -172,8 +175,11 @@ grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__
 %{__rm} -r deps/nghttp2
 %{__rm} -r deps/npm
 %{__rm} -r deps/openssl
+%{__rm} -r deps/simdjson
+%{__rm} -r deps/sqlite
 %{?with_system_uv:%{__rm} -r deps/uv}
 %{__rm} -r deps/zlib
+%{__rm} -r deps/zstd
 
 %build
 ver=$(awk '/#define NODE_MODULE_VERSION [0-9]+/{print $3}' src/node_version.h)
@@ -194,7 +200,10 @@ GYP_DEFINES="soname_version=%{sover}" \
 	%{?with_system_uv:--shared-libuv} \
 	--shared-nghttp2 \
 	--shared-openssl \
+	--shared-simdjson \
+	--shared-sqlite \
 	--shared-zlib \
+	--shared-zstd \
 	--with-intl=system-icu \
 	--without-corepack \
 	--without-npm \
