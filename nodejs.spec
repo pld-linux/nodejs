@@ -68,6 +68,7 @@ BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.007
 BuildRequires:	sed >= 4.0
 BuildRequires:	simdjson-devel
+BuildRequires:	simdutf-devel
 BuildRequires:	sqlite3-devel
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
@@ -202,6 +203,7 @@ GYP_DEFINES="soname_version=%{sover}" \
 	--shared-nghttp2 \
 	--shared-openssl \
 	--shared-simdjson \
+	--shared-simdutf \
 	--shared-sqlite \
 	--shared-zlib \
 	--shared-zstd \
