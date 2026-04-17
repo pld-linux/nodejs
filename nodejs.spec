@@ -29,12 +29,12 @@ Name:		nodejs
 # Active start: 2025-10-28
 # Maintenance start: October 2026
 # Maintenance end: April 2028
-Version:	24.14.1
+Version:	24.15.0
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/download/release/latest-v24.x/node-v%{version}.tar.xz
-# Source0-md5:	a2efca09a1b1f20edf5e1e1c3be73e99
+# Source0-md5:	a8f06afb9a33b88a6b305b53e675aaae
 # force node to use /usr/lib/node as the systemwide module directory
 Patch0:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
@@ -42,7 +42,6 @@ Patch1:		%{name}-lib64path.patch
 Patch2:		0001-Remove-unused-OpenSSL-config.patch
 Patch3:		arm-yield.patch
 Patch4:		cflags.patch
-Patch5:		llhttp-neon.patch
 Patch6:		tuple-build-fix.patch
 URL:		https://nodejs.org/
 BuildRequires:	c-ares-devel >= 1.17.2
@@ -162,7 +161,6 @@ Ten pakiet zawiera dokumentację Node.js.
 %patch -P2 -p1
 %patch -P3 -p1
 %patch -P4 -p1
-%patch -P5 -p1
 %patch -P6 -p1 -d deps/v8
 
 grep -r '#!.*env python' -l . | xargs %{__sed} -i -e '1 s,#!.*env python$,#!%{__python3},'
