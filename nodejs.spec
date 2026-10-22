@@ -29,12 +29,12 @@ Name:		nodejs
 # Active start: 2025-10-28
 # Maintenance start: October 2026
 # Maintenance end: April 2028
-Version:	24.22.0
+Version:	24.22.1
 Release:	1
 License:	BSD and MIT and Apache v2.0 and GPL v3
 Group:		Development/Languages
 Source0:	https://nodejs.org/download/release/latest-v24.x/node-v%{version}.tar.xz
-# Source0-md5:	8e5e3a69baca36d7e1bdb3c9a6e3cd9a
+# Source0-md5:	395d0a31fb28d18a5a017efe11c237f9
 # force node to use /usr/lib/node as the systemwide module directory
 Patch0:		%{name}-libpath.patch
 # use /usr/lib64/node as an arch-specific module dir when appropriate
@@ -54,7 +54,7 @@ BuildRequires:	llhttp-devel >= 2.1.3
 %ifarch mips mipsel mips64 mips64el ppc %{arm}
 BuildRequires:	libatomic-devel
 %endif
-%{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.0.9}
+%{?with_system_brotli:BuildRequires:	libbrotli-devel >= 1.2.1}
 BuildRequires:	libicu-devel >= 69.1
 BuildRequires:	libstdc++-devel >= 6:4.8
 %{?with_system_uv:BuildRequires:	libuv-devel >= 1.42.0}
@@ -80,7 +80,7 @@ Requires:	ca-certificates
 Requires:	cpuinfo(sse2)
 %endif
 %{?with_http_parser:Requires:	http-parser >= 2.9.3}
-%{?with_system_brotli:Requires:	libbrotli >= 1.0.9}
+%{?with_system_brotli:Requires:	libbrotli >= 1.2.1}
 %{?with_system_uv:Requires:	libuv >= 1.42.0}
 Requires:	nghttp2-libs >= 1.42.0
 Requires:	zlib >= 1.2.11
